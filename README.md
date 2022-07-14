@@ -1,1 +1,1 @@
-# sei-tetris
+# Project 1 - Grid Game : Tetris
