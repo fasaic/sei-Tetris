@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>TETRIS!!</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Electrolize&display=swap" rel="stylesheet">
+  <link rel="icon" href="./media/TBLogo_106x106_400x400.png">
+  <script src="scripts/app.js" charset="utf-8"></script>
+</head>
+
+<body>
+  <header>
+    <h1>TETRIS</h1>
+  </header>
+  <main>
+    <!-- PANEL 1 -->
+    <section class="panel" id="left">
+      <button class="button" id="playPause">4</button>
+      <div class="panel" id="controls">
+        <div class="buttons">
+          <button class="button" id="restart">RESTART</button>
+          <button class="button" id="sfx">SOUND ON</button>
+        </div>
+    
+        <!-- <input type="checkbox" class="button"/> -->
+        <div id="howTo">
+          <h2>controls</h2>
+          <img src="" alt="">
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PANEL 2 -->
+    <section id="grid-wrapper">
+      <div id="playGrid"></div>
+      
+      <div id="startGame">
+        <h2>Welcome to</h2>
+        <h2 id="tetris">TETRIS</h2>
+        <h3 class="enter">press enter to start</h3>
+      </div>
+      <div id="gameOver">
+        <h2>game over :(</h2>
+        <h2 id="scoreOver">score: <span id="scoreOverValue"></span></h2>
+        <h3 class="enter">press enter to restart</h3>
+      </div>
+    </section>
+
+    <!-- PANEL 3 -->
+    <section class="panel" id="right">
+      <div id="nextGrid-wrapper">
+        <!-- <p>NEXT</p> -->
+        <div id="nextGrid"></div>
+      </div>
+      <div class="stats" id="level">
+        <p>LEVEL</p>
+        <div class="statsDisplay">
+          <p id="levelDisplay">1</p>
+        </div>
+      </div>
+      <div class="stats" id="linesCleared">
+        <p>LINES CLEARED</p>
+        <div class="statsDisplay">
+          <p id="linesDisplay">2</p>
+        </div>
+      </div>
+      <div class="stats" id="score">
+        <p>SCORE</p>
+        <div class="statsDisplay">
+          <p id="scoreDisplay">13455</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+
+</html>
