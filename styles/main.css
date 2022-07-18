@@ -150,15 +150,53 @@ main {
 
 /* .t {
   background-color: #ca67d4;
-} */
+}
 
-/* .t {
+.t {
   background-color: #fab700;
-} */
+}
 
 .t {
   background-color: #3d9ef1;
 }
 .t-inactive {
   background-color: #9c7201;
+}
+
+.t {
+  background-color: #3d9ef1;
+} */
+
+.movingO {
+  background-color: #f0e054;
+}
+
+.movingI {
+  background-color: #82c8cb;
+}
+.movingS {
+  background-color: #88d467;
+}
+
+.movingZ {
+  background-color: #d46767;
+}
+
+.movingT {
+  background-color: #c074c8;
+}
+
+.movingL {
+  background-color: #fab700;
+}
+
+.movingJ {
+  background-color: #3d9ef1;
+}
+.t-inactive {
+  background-color: #9c7201;
+}
+
+.t {
+  background-color: #3d9ef1;
 }
