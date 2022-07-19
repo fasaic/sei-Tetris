@@ -18,7 +18,7 @@ function init() {
   function createPlayGrid() {
     for (let i = 0; i < playCellCount; i++) {
       const playCell = document.createElement('div')
-      playCell.innerText = i
+      // playCell.innerText = i
       playCell.style.fontSize = '0.6rem'
       playCell.dataset.index = i
       playCells.push(playCell)
@@ -30,7 +30,7 @@ function init() {
   function createNextGrid() {
     for (let i = 0; i < nextCellCount; i++) {
       const nextCell = document.createElement('div')
-      nextCell.innerText = i
+      // nextCell.innerText = i
       nextCell.style.fontSize = '0.6rem'
       nextCell.dataset.index = i
       nextCells.push(nextCell)
@@ -72,42 +72,43 @@ function init() {
   }
 
 
-  const shape1 = new Shape('O', [4, 5, 14, 15], {
+  const shape1 = new Shape('O', [-6, -5, 4, 5], {
     one: [0, 0, 0, 0],
     two: [0, 0, 0, 0],
     three: [0, 0, 0, 0],
     four: [0, 0, 0, 0]
   })
 
-  const shape2 = new Shape('I', [3, 4, 5, 6], {
+  const shape2 = new Shape('I', [-7, -6, -5, -4], {
     one: [18, 9, 0, -9],
-    two: [-18, -9, 0, 9],
+    two: [2, 11, 20, 29],
     three: [18, 9, 0, -9],
     four: [-18, -9, 0, 9]
   })
 
-  const shape3 = new Shape('S', [14, 15, 23, 24], {
-    one: [10, 1, 8, -1],
-    two: [-10, -1, -8, 1],
-    three: [10, 1, 8, -1],
-    four: [-10, -1, -8, 1]
+  const shape3 = new Shape('S', [-6, -5, 3, 4], {
+    one: [0, -9, -2, -11],
+    two: [0, 9, 2, 11],
+    three: [0, -9, -2, -11],
+    four: [0, 9, 2, 11],
+
   })
 
-  const shape4 = new Shape('Z', [14, 15, 25, 26], {
-    one: [9, 1, 10, 2],
-    two: [-9, -1, -10, -2],
-    three: [9, 1, 10, 2],
-    four: [-9, -1, -10, -2]
+  const shape4 = new Shape('Z', [-6, -5, 5, 6], {
+    one: [-1, -9, 0, -8],
+    two: [1, 9, 0, 8],
+    three: [-1, -9, 0, -8],
+    four: [1, 9, 0, 8],
   })
 
-  const shape5 = new Shape('T', [4, 13, 14, 15], {
+  const shape5 = new Shape('T', [-6, 3, 4, 5], {
     one: [0, 0, 0, -9],
     two: [0, 1, 1, 9],
     three: [9, 0, 0, 0],
     four: [-9, -1, -1, 0]
   })
 
-  const shape6 = new Shape('L', [5, 13, 14, 15], {
+  const shape6 = new Shape('L', [-5, 3, 4, 5], {
     one: [2, 9, 0, -9],
     two: [-1, 1, 10, 10],
     three: [9, 0, -9, -2],
@@ -115,7 +116,7 @@ function init() {
   })
 
 
-  const shape7 = new Shape('J', [4, 14, 15, 16], {
+  const shape7 = new Shape('J', [-6, 4, 5, 6], {
     one: [-1, -1, -9, -9],
     two: [1, -8, 0, 9],
     three: [9, 9, 1, 1],
@@ -128,16 +129,6 @@ function init() {
   //! RANDOMIZE SHAPE----------------------------------------------------
   const randomHist = []
   function randomizeShape() {
-    // const randomHist = []
-    // let random = Math.floor(Math.random() * 7 + 1)
-    // if (randomHist.length > 3){
-    //   randomHist.shift()
-    // } else {
-    //   while(randomHist.some(item => item === random)){
-    //   random = Math.floor(Math.random() * 7 + 1)
-    // }
-    // randomHist.push(random)
-    // return eval(`shape${random}`)
     let random = Math.floor(Math.random() * 7 + 1)
     if (randomHist.length < 2) {
       randomHist.push(random)
@@ -165,14 +156,13 @@ function init() {
   let nextDisplayPos = null
   let time = 1000
   let timer = null
+  let score = 0
+  const scoreText = document.querySelector('#scoreDisplay')
+  const finalScoreText = document.querySelector('#scoreOverValue')
+  scoreText.innerHTML = `${score}`
+  const restartButton = document.querySelector('#restart')
+  restartButton.disabled = true
 
-
-  // callShape()
-  // nextShapeDisplay()
-  // console.log('shape.currentpos???', shape.currentPos)
-
-
-  // drop()
   function drop() {
     // Check if it hits buttom or cells with landed shape
     if (playCells.some(cell => cell.className.includes('moving'))) {
@@ -214,6 +204,14 @@ function init() {
       }
       nextShape = randomizeShape()
       nextShapeDisplay()
+      console.log('starttttttt', shape.startPos)
+      if (shape.startPos.some(index => playCells[index + 10].className.includes('landed')) || shape.currentPos.some(index => playCells[index - 10] < 10)) {
+        console.log('UHOHHHHHH')
+        // clearInterval(timer)
+        gameOver()
+        return
+
+      }
       // for (let i = 0; i < 20; i++){
       //   if (playCells[index].classList.) {
       //     shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
@@ -221,16 +219,28 @@ function init() {
       //     gameOver()
       //   }
       // }
-     
+
       moveDown()
       timer = setTimeout(drop, time)
     }
   }
 
   function gameOver() {
-    document.querySelector('#gameOver').style.display = 'block'
+    document.querySelector('#gameOver').style.display = 'flex'
     document.querySelector('#playGrid').style.position = 'absolute'
+    console.log('GAMEEEEOVER')
+    // currentScore = score
+    finalScoreText.innerHTML = `${score}`
+    clearInterval(timer)
   }
+
+  // if (document.querySelector('#startGame').style.display === 'flex'){
+
+  // } else if (document.querySelector('#startGame').style.display === 'none') {
+  //   restartButton.disabled = true
+  //   restartButton.addEventListener('click', gameOver)
+  // }
+
   function remove() {
     shape.currentPos.forEach(index => playCells[index].classList.remove(shape.moving))
     console.log('MOVING REMOVED')
@@ -241,9 +251,10 @@ function init() {
     console.log('NEXT SHAPE DISPLAY ACTIVATED')
     // nextShape.currentPos = nextShape.startPos
     if (nextShape.shape === 'Z' || nextShape.shape === 'S') {
-      nextDisplayPos = nextShape.startPos.map(cell => cell)
+      nextDisplayPos = nextShape.startPos.map(cell => cell + 20)
     } else {
-      nextDisplayPos = nextShape.startPos.map(cell => cell + 10)
+      nextDisplayPos = nextShape.startPos.map(cell => cell + 20)
+      console.log()
     }
     console.log('Next current Position', nextShape.startPos)
     console.log('Next Display Position', nextDisplayPos)
@@ -294,7 +305,7 @@ function init() {
   // !---------------ROTATE------------------------------------------------------
   let r = 0
   function rotate() {
-    soundClick.play()
+    // soundClick.play()
     r++
     if (r > 3) {
       r = 0
@@ -304,8 +315,15 @@ function init() {
     console.log('rotation offset -->', rot)
     console.log('shape.currentPos Before-->', shape.currentPos)
     for (let i = 0; i < 4; i++) {
+      // if (shape.shape === 'I') {
+      //   shape.startPos.forEach(index => playCells[index].classList.remove(shape.moving))
+      //   console.log('REMOVED I');
+      //   shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
+      // } else {
       remove()
       shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
+      // }
+
     }
     console.log('Test Current after loop', shape.currentPos)
     // PREVENT OVERFLOW LEFT
@@ -393,7 +411,7 @@ function init() {
 
   const soundClick = new Audio('./audio/rotate2.wav')
   function handleMovement(event) {
-    soundClick.play()
+    // soundClick.play()
     const up = 38
     const down = 40
     const left = 37
@@ -449,19 +467,41 @@ function init() {
       while (!(shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed')))) {
         remove()
         moveDown()
+
       }
+      score += 5
+      scoreText.innerHTML = `${score}`
+      console.log(score)
       inactive()
       r = 0
       console.log('space')
     } else if (enter === keyCode) {
-      document.querySelector('#startGame').style.display = 'none'
-      document.querySelector('#playGrid').style.position = 'relative'
-      drop()
+      if (document.querySelector('#gameOver').style.display === 'flex') {
+        document.querySelector('#gameOver').style.display = 'none'
+        document.querySelector('#playGrid').style.position = 'relative'
+        // document.querySelector('#playGrid div').classList.remove('landed')
+        console.log('GAME OVER ENTER')
+        playCells.forEach(item => item.className = '')
+        nextCells.forEach(item => item.className = '')
+        score = 0
+        scoreText.innerHTML = `${score}`
+        restartButton.disabled = false
+        // playCells.map(index => playCells[index].classList.remove('landed'))
+        drop()
+      } else {
+        document.querySelector('#startGame').style.display = 'none'
+        document.querySelector('#playGrid').style.position = 'relative'
+        restartButton.disabled = false
+
+        // remove()
+        drop()
+      }
+      console.log(score)
     }
   }
 
 
-
+  restartButton.addEventListener('click', gameOver)
   document.addEventListener('keydown', handleMovement)
 }
 
