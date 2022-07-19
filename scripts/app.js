@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 function init() {
   // ! MAKE GRID ---------------------------------------------------------------------------------
-
+  const wrapperGrid = document.querySelector('#grid-wrapper')
   const playGrid = document.querySelector('#playGrid')
   const playWidth = 10
   const playHeight = 20
@@ -38,8 +38,20 @@ function init() {
     }
   }
 
+  // function createWrapperGrid() {
+  //   for (let i = 0; i < playCellCount; i++) {
+  //     const playCell = document.createElement('div')
+  //     playCell.innerText = i
+  //     playCell.style.fontSize = '0.6rem'
+  //     playCell.dataset.index = i
+  //     playCells.push(playCell)
+  //     wrapperGrid.appendChild(playCell)
+  //   }
+  //   console.log(playCells)
+  // }
   createPlayGrid()
   createNextGrid()
+  // createWrapperGrid()
 
 
   // ! MAKE SHAPES -------------------------------------------------------------------------------
@@ -127,7 +139,7 @@ function init() {
     // randomHist.push(random)
     // return eval(`shape${random}`)
     let random = Math.floor(Math.random() * 7 + 1)
-    if (randomHist.length < 2){
+    if (randomHist.length < 2) {
       randomHist.push(random)
     } else if (randomHist.length < 5) {
       while (randomHist.some(item => item === random)) {
@@ -152,6 +164,7 @@ function init() {
   let nextShape = null
   let nextDisplayPos = null
   let time = 1000
+  let timer = null
 
 
   // callShape()
@@ -159,24 +172,29 @@ function init() {
   // console.log('shape.currentpos???', shape.currentPos)
 
 
-  drop()
+  // drop()
   function drop() {
     // Check if it hits buttom or cells with landed shape
     if (playCells.some(cell => cell.className.includes('moving'))) {
       console.log('there is a moving shape!')
       if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
         console.log('REACHED THE ENDD --> WAITING FOR NEXT SHAPE')
-        time = 200
+        time = 1000
         remove()
         inactive()
         shape = nextShape
       } else {
         remove()
         moveDown()
+        // while (!(shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed')))){
+        //   shape.currentPos.some(index => playCells[index].classList.add('overlay'))
+        // }
         time = 1000
       }
-      setTimeout(drop, time)
+      timer = setTimeout(drop, time)
+
     } else {
+      timer = 1000
       console.log('NextShape', nextShape)
       console.log('No active shape', nextShape)
       if (nextShape === null) {
@@ -194,14 +212,25 @@ function init() {
         console.log('after equal start -->', shape.currentPos)
 
       }
-
       nextShape = randomizeShape()
       nextShapeDisplay()
+      // for (let i = 0; i < 20; i++){
+      //   if (playCells[index].classList.) {
+      //     shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+      //     clearInterval(timer)
+      //     gameOver()
+      //   }
+      // }
+     
       moveDown()
-      setTimeout(drop, time)
+      timer = setTimeout(drop, time)
     }
   }
 
+  function gameOver() {
+    document.querySelector('#gameOver').style.display = 'block'
+    document.querySelector('#playGrid').style.position = 'absolute'
+  }
   function remove() {
     shape.currentPos.forEach(index => playCells[index].classList.remove(shape.moving))
     console.log('MOVING REMOVED')
@@ -369,6 +398,8 @@ function init() {
     const down = 40
     const left = 37
     const right = 39
+    const space = 32
+    const enter = 13
     const keyCode = event.keyCode
 
     if (up === keyCode) {
@@ -414,6 +445,18 @@ function init() {
         shape.nextPos = shape.currentPos.map(index => index + 1)
         shape.currentPos = shape.nextPos
       }
+    } else if (space === keyCode) {
+      while (!(shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed')))) {
+        remove()
+        moveDown()
+      }
+      inactive()
+      r = 0
+      console.log('space')
+    } else if (enter === keyCode) {
+      document.querySelector('#startGame').style.display = 'none'
+      document.querySelector('#playGrid').style.position = 'relative'
+      drop()
     }
   }
 
