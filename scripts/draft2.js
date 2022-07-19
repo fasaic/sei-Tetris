@@ -49,12 +49,10 @@ function init() {
       this.shape = shape
       this.startPos = startPos
       this.currentPos = startPos
-      this.nextPos = this.currentPos
+      this.nextPos = this.currentPos + 10
       this.rot = rot
-      // this.moving = `moving${shape}`
-      this.moving = 'moving' + shape
-      // this.landed = `landed${shape}`
-      this.landed = 'landed' + shape
+      this.moving = `moving${shape}`
+      this.landed = `landed${shape}`
       this.stopped = `stopped${shape}`
     }
   }
@@ -114,110 +112,43 @@ function init() {
 
 
   //! RANDOMIZE SHAPE----------------------------------------------------
-  const randomHist = []
+
   function randomizeShape() {
-    // const randomHist = []
-    // let random = Math.floor(Math.random() * 7 + 1)
-    // if (randomHist.length > 3){
-    //   randomHist.shift()
-    // } else {
-    //   while(randomHist.some(item => item === random)){
-    //   random = Math.floor(Math.random() * 7 + 1)
-    // }
-    // randomHist.push(random)
-    // return eval(`shape${random}`)
-    let random = Math.floor(Math.random() * 7 + 1)
-    if (randomHist.length < 2){
-      randomHist.push(random)
-    } else if (randomHist.length < 5) {
-      while (randomHist.some(item => item === random)) {
-        random = Math.floor(Math.random() * 7 + 1)
-        console.log('looping1')
-      }
-      randomHist.push(random)
-    } else if (randomHist.length >= 5) {
-      while (randomHist.some(item => item === random)) {
-        random = Math.floor(Math.random() * 7 + 1)
-        console.log('looping2')
-      }
-      randomHist.shift()
-      randomHist.push(random)
-    }
+    const random = Math.floor(Math.random() * 7 + 1)
     return eval(`shape${random}`)
   }
 
-
   // ! CALL SHAPE / NEXT SHAPE DISPLAY -------------------------------------------------
   let shape = null
-  let nextShape = null
+  let nextShape
   let nextDisplayPos = null
-  let time = 1000
 
-
-  // callShape()
-  // nextShapeDisplay()
-  // console.log('shape.currentpos???', shape.currentPos)
-
-
-  drop()
-  function drop() {
-    // Check if it hits buttom or cells with landed shape
-    if (playCells.some(cell => cell.className.includes('moving'))) {
-      console.log('there is a moving shape!')
-      if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
-        console.log('REACHED THE ENDD --> WAITING FOR NEXT SHAPE')
-        time = 200
-        remove()
-        inactive()
-        shape = nextShape
-      } else {
-        remove()
-        moveDown()
-        time = 1000
-      }
-      setTimeout(drop, time)
-    } else {
-      console.log('NextShape', nextShape)
-      console.log('No active shape', nextShape)
-      if (nextShape === null) {
-        console.log('nextShape = null')
-        shape = randomizeShape()
-      } else {
-        console.log('there is next shape')
-        shape = nextShape
-        shape.currentPos = shape.startPos
-        console.log(`newShape ${shape.shape} must equale next shape ${nextShape.shape}`)
-        r = 0
-        nextShapeRemove()
-        console.log(shape.currentPos)
-        console.log(shape.startPos)
-        console.log('after equal start -->', shape.currentPos)
-
-      }
-
-      nextShape = randomizeShape()
-      nextShapeDisplay()
-      moveDown()
-      setTimeout(drop, time)
-    }
+  function callShape() {
+    nextShape = randomizeShape()
+    console.log(nextShape)
+    shape = nextShape
+    shape.nextPos = shape.currentPos.map(index => index + playWidth)
   }
 
-  function remove() {
-    shape.currentPos.forEach(index => playCells[index].classList.remove(shape.moving))
-    console.log('MOVING REMOVED')
+  function stopShape() {
+    remove()
+    nextShape = randomizeShape()
+    console.log(nextShape)
+    shape = nextShape
+    shape.nextPos = shape.currentPos.map(index => index + playWidth)
   }
+
+
 
 
   function nextShapeDisplay() {
-    console.log('NEXT SHAPE DISPLAY ACTIVATED')
-    // nextShape.currentPos = nextShape.startPos
+    console.log(nextShape.currentPos)
     if (nextShape.shape === 'Z' || nextShape.shape === 'S') {
-      nextDisplayPos = nextShape.startPos.map(cell => cell)
+      nextDisplayPos = nextShape.currentPos.map(cell => cell)
     } else {
-      nextDisplayPos = nextShape.startPos.map(cell => cell + 10)
+      nextDisplayPos = nextShape.currentPos.map(cell => cell + 10)
     }
-    console.log('Next current Position', nextShape.startPos)
-    console.log('Next Display Position', nextDisplayPos)
+    console.log(nextDisplayPos)
     nextDisplayPos = nextDisplayPos.map(cell => {
       if (cell <= 6) {
         console.log('if 1')
@@ -231,7 +162,7 @@ function init() {
       } else if (cell <= 36) {
         console.log('if 4')
         console.log(cell -= 10)
-        if (nextShape.shape === 'Z') {
+        if (nextShape.shape === 'Z'){
           return cell -= 13
         } else {
           return cell -= 9
@@ -239,41 +170,83 @@ function init() {
       }
     })
     nextDisplayPos.forEach(index => nextCells[index].classList.add(nextShape.moving))
-    console.log('NEXTDISPLAYPOS', nextDisplayPos)
+  }
+  callShape()
+  nextShapeDisplay()
+  console.log('shape.currentpos???', shape.currentPos)
+
+  function remove() {
+    shape.currentPos.forEach(index => playCells[index].classList.remove(shape.moving))
+    console.log('REMOVED')
   }
 
   function nextShapeRemove() {
-    console.log('next remove class -->', nextShape.moving)
-    nextDisplayPos.forEach(index => nextCells[index].classList.remove(shape.moving))
-    // nextCells.forEach(index => nextCells[index].classList.remove(shape.moving))
+    nextDisplayPos.forEach(index => nextCells[index].classList.remove(nextShape.moving))
     console.log('NxtRemove')
   }
 
+  function drop() {
+    shape.currentPos.forEach(index => playCells[index]).classList.add(shape.moving)
+
+  }
+
   function moveDown() {
+    // remove()
     console.log('moveDown')
+  
+    console.log('Down Shape.nextPos Before', shape.nextPos)
     shape.currentPos.forEach(index => playCells[index + 10].classList.add(shape.moving))
     shape.currentPos = shape.currentPos.map(index => index + 10)
-
+    // shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+    // shape.nextPos = shape.currentPos.map(index => index + 10)
+    // shape.currentPos = shape.nextPos
+   
+    console.log('Down Shape.nextPos After', shape.nextPos)
+    
   }
 
   function inactive() {
     shape.currentPos.forEach(index => playCells[index].classList.add(shape.landed))
     shape.currentPos.forEach(index => playCells[index].classList.remove(shape.moving))
+    // spawn
   }
 
+  // const timer = setInterval(() => {
+  //   if (shape.currentPos.some(item => item >= (190))) {
+  //     // remove()
+  //     console.log('stop timer')
+  //     setTimeout(inactive, 0)
+  //     clearInterval(timer)
+  //   } else {
+  //     moveDown()
+  //     console.log('timer active')
+  //   }
+  // }, 1300)
 
+  const timer = setInterval(() => {
+    if (shape.currentPos.some(item => item >= (190))) {
+      // remove()
+      console.log('stop timer')
+      setTimeout(inactive, 0)
+      clearInterval(timer)
+    } else {
+      remove()
+      // shape.currentPos = shape.nextPos
+      // console.log('Down Shape.currentPos After', shape.currentPos)
+      moveDown()
+      console.log('timer active')
+    }
+  }, 1300)
+  
   // !---------------ROTATE------------------------------------------------------
   let r = 0
   function rotate() {
-    soundClick.play()
     r++
     if (r > 3) {
       r = 0
     }
     console.log('r before rot', r)
     const rot = Object.values(shape.rot)[r]
-    console.log('rotation offset -->', rot)
-    console.log('shape.currentPos Before-->', shape.currentPos)
     for (let i = 0; i < 4; i++) {
       remove()
       shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
@@ -362,9 +335,9 @@ function init() {
   }
 
 
-  const soundClick = new Audio('./audio/rotate2.wav')
+
   function handleMovement(event) {
-    soundClick.play()
+    // soundClick.play()
     const up = 38
     const down = 40
     const left = 37
@@ -376,24 +349,21 @@ function init() {
       // remove()
       console.log(shape.currentPos)
       console.log(shape.nextPos)
-      if (shape.currentPos.some(item => item >= (playCellCount - playWidth)) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
+      if (shape.currentPos.some(item => item >= (playCellCount - playWidth))) {
         console.log('Clicked up end')
       } else {
         rotate()
       }
     } else if (down === keyCode) {
-      if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
+      if (shape.currentPos.some(item => item >= (playCellCount - playWidth))) {
         console.log('Clicked down end')
-        inactive()
-        r = 0
       } else {
         remove()
         // shape.currentPos = shape.nextPos
-        // moveDown()
         moveDown()
       }
     } else if (left === keyCode) {
-      if (shape.currentPos.some(item => (item % playWidth === 0)) || shape.currentPos.some(index => playCells[index - 1].className.includes('landed'))) {
+      if (shape.currentPos.some(item => (item % playWidth === 0))) {
         console.log('Clicked left End')
       } else {
 
@@ -405,7 +375,7 @@ function init() {
       }
     } else if (right === keyCode) {
       const audio = document.getElementById('audio')
-      if (shape.currentPos.some(item => (item % playWidth === 9)) || shape.currentPos.some(index => playCells[index + 1].className.includes('landed'))) {
+      if (shape.currentPos.some(item => (item % playWidth === 9))) {
         console.log('Clicked right End')
       } else {
         remove()
@@ -417,7 +387,7 @@ function init() {
     }
   }
 
-
+ 
 
   document.addEventListener('keydown', handleMovement)
 }

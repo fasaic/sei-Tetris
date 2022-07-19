@@ -168,35 +168,66 @@ main {
 } */
 
 .movingO {
+  background-color: #f0e0547e;
+}
+
+.landedO {
   background-color: #f0e054;
+  border: 3px dashed lightgrey;
+}
+
+.landedI {
+  background-color: #82c8cb;
 }
 
 .movingI {
-  background-color: #82c8cb;
+  background-color: #82c9cb8a;
 }
-.movingS {
+
+.landedS {
   background-color: #88d467;
 }
 
-.movingZ {
+.movingS {
+  background-color: #88d46783;
+}
+
+.landedZ {
   background-color: #d46767;
 }
 
-.movingT {
+.movingZ {
+  background-color: #d467677d;
+}
+
+.landedT {
   background-color: #c074c8;
 }
 
-.movingL {
+.movingT {
+  background-color: #c074c882;
+}
+
+.landedL {
   background-color: #fab700;
 }
 
-.movingJ {
+.movingL {
+  background-color: #fab70079;
+}
+
+.landedJ {
   background-color: #3d9ef1;
 }
-.t-inactive {
+
+.movingJ {
+  background-color: #3d9df183;
+}
+
+/* .t-inactive {
   background-color: #9c7201;
 }
 
 .t {
   background-color: #3d9ef1;
-}
+} */
