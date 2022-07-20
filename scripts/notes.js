@@ -1,4 +1,4 @@
-function init(){
+function init() {
 
   // ! ELEMENTS TO BE CREATED / CHANGED BY JS
   // *------ GENERATE GRIDS-------
@@ -6,14 +6,14 @@ function init(){
   // playWidth = 10 playHeight = 20 playCellCount = playWidth * playHeight grid
   // nextWidth = 4 nextHeight = 4 nextCellCount = nextWidth * nextHeight
   // holdWidth = 4 holdWidth = 4 holdCellCount = holdWidth * holdHeight
-  
+
   // *------- GENERATE SHAPES ------- 
   // ? must create 7 tetrominos (call it shape for easier understanding)
   // there are 7 shapes to generate (add color class to cell)
   // each shape has an initial start array
   // each shape has a name -> o, i, l ,j, z, s, t
   // What does the program has to know from each shape?
-      // - ch
+  // - ch
 
 
   // *------- BUTTONS ------- 
@@ -37,7 +37,7 @@ function init(){
 
   // *------ OTHERS ------
   // ? gameActive = true / false
-  
+
 
   // ! ---------------------- EXECUTIONS ---------------
 
@@ -71,7 +71,7 @@ function init(){
 
   // *----- NEXT SHAPE DISPLAY --------
   // ? display Next shape in the nextGrid
-  
+
   // *----- SHAPE SPAWN / MOVE DOWN --------------- 
   // ? "drop" shape from top of playGrid
   // Inorder for the shape to move: 
@@ -143,31 +143,44 @@ function init(){
 
 
 
+*/
 
+  // const wrapperGrid = document.querySelector('#grid-wrapper')
+  const playGrid = document.querySelector('#playGrid')
+  const playWidth = 10
+  const playHeight = 20
+  const playCellCount = playWidth * playHeight
+  const playCells = []
 
+  const nextGrid = document.querySelector('#nextGrid')
+  const nextWidth = 4
+  const nextHeight = 4
+  const nextCellCount = nextWidth * nextHeight
+  const nextCells = []
 
+  function makeGrid(cellCount, cells, gridDiv) {
+    for (let i = 0; i < cellCount; i++) {
+      const cell = document.createElement('div')
+      // cell.innerText = i
+      // cell.style.fontSize = '0.6rem'
+      cell.dataset.index = i
+      cells.push(cell)
+      gridDiv.appendChild(cell)
+    }
+  }
 
+  makeGrid(playCellCount, playCells, playGrid)
+  makeGrid(nextCellCount, nextCells, nextGrid)
 
+  console.log(playCells)
+  const playCellRows = []
+  const cellsPerRow = 10
+  for (let i = 0; i < playCells.length; i += cellsPerRow) {
+    const cellsGroup = playCells.slice(i, i + cellsPerRow)
+    playCellRows.push(cellsGroup)
+    console.log('PlayCellRows loop no', i, ' -->', playCellRows)
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  console.log('playCellRows after loop -->', playCellRows)
 }
 window.addEventListener('DOMContentLoaded', init)
