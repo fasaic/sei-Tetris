@@ -282,12 +282,12 @@ main {
 
 .movingO {
   background-color: #f0e054c6;
-  box-shadow: 2px 2px 30px #f0e054c6;
+  /* box-shadow: 2px 2px 30px #f0e054c6; */
 }
 
 .landedO {
   background-color: #f0e054;
-  border: 3px dashed lightgrey;
+  /* border: 3px dashed lightgrey; */
 }
 
 .landedI {
@@ -296,7 +296,7 @@ main {
 
 .movingI {
   background-color: #82c9cbc3;
-  box-shadow: 2px 2px 30px #82c9cbc3;
+  /* box-shadow: 2px 2px 30px #82c9cbc3; */
 }
 
 .landedS {
@@ -307,7 +307,7 @@ main {
 
 .movingS {
   background-color: #88d467c4;
-  box-shadow: 2px 2px 30px #88d467c4;
+  /* box-shadow: 2px 2px 30px #88d467c4; */
 }
 
 .landedZ {
@@ -316,7 +316,7 @@ main {
 
 .movingZ {
   background-color: #d46767c1;
-  box-shadow: 2px 2px 30px #d46767c1;
+  /* box-shadow: 2px 2px 30px #d46767c1; */
 }
 
 .landedT {
@@ -325,7 +325,7 @@ main {
 
 .movingT {
   background-color: #c074c8c5;
-  box-shadow: 2px 2px 30px #c074c8c5;
+  /* box-shadow: 2px 2px 30px #c074c8c5; */
   
 }
 
@@ -335,7 +335,7 @@ main {
 
 .movingL {
   background-color: #fab700af;
-  box-shadow: 2px 2px 30px #fab700af;
+  /* box-shadow: 2px 2px 30px #fab700af; */
 }
 
 .landedJ {
@@ -344,7 +344,7 @@ main {
 
 .movingJ {
   background-color: #3d9df1af;
-  box-shadow: 2px 2px 30px #3d9df1af;
+  /* box-shadow: 2px 2px 30px #3d9df1af; */
 }
 
 /* .t-inactive {

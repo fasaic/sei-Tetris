@@ -18,8 +18,8 @@ function init() {
   function makeGrid(cellCount, cells, gridDiv) {
     for (let i = 0; i < cellCount; i++) {
       const cell = document.createElement('div')
-      cell.innerText = i
-      cell.style.fontSize = '0.6rem'
+      // cell.innerText = i
+      // cell.style.fontSize = '0.6rem'
       cell.dataset.index = i
       cells.push(cell)
       gridDiv.appendChild(cell)
@@ -363,42 +363,57 @@ function init() {
     clearedRowCount = 0
     clearedRow = []
 
-    for (let i = 0; i <= 19; i++) {
+    
+    // for (let i = 0; i <= 19; i++) {
+    for (let i = 19; i >= 0; i--) {
+
       if (playCellRows[i].every(item => item.className.includes('landed'))) {
         clearedRow.push(i)
         clearedRowCount += 1
-        for (let i = 0; i < clearedRow.length; i++) {
+        for (let c = 0; c < clearedRow.length; c++) {
+        // for (let c = clearedRow.length - 1; c >= 0; c--) {
+          console.log('LAST ITEM OF CLEARED ROW , FIRST LOOOOP ->', c)
           // select that certain row, save in new variable
-          const row = playCellRows[clearedRow[i]]
+          const row = playCellRows[clearedRow[c]]
           // remove class from that row
           row.forEach(cell => playCells[parseFloat(cell.dataset.index)].className = '')
           // saved all rows to be shifted down in new variable, choose only landed cells on top of removed row
-          landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[i] * 10))
+          if (c === clearedRow.length - 1){
+            landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[c] * 10))
+          } else {
+            landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[c] * 10) && cell.dataset.index > (clearedRow[c] * 10) - 19 )
+          }
+          // landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[i] * 10))
           landedCells = landedCells.filter(cell => cell.className.includes('landed'))
-          console.log('filtered landed', landedCells)
+          console.log('filtered landed loop', c, ' --> ', landedCells)
+          console.log('Removed Row loop', c, ' --> ', playCellRows[clearedRow[c]])
           
           // iterate through every landedCells 
-          for (let i = 0; i < landedCells.length; i++) {
+          for (let b = landedCells.length - 1; b >= 0; b--) {
+            console.log('SHIFT CELLLLSSSS ROW -->', b)
             // save class name of that cell in variable before remove
-            landedClass = landedCells[i].className
+            landedClass = landedCells[b].className
             // landedClass = 'preview'
-            console.log('loop.no -->', i)
+            // console.log('loop.no -->', i)
             console.log('landed class-->', landedClass)
-
-            // Remove Class
-            // console.log('cell to be removed -->', landedCells[i])
-            landedCells[i].className = ''
-            console.log('removed class ', landedClass, 'from ', landedCells[i])
-
-            // Add saved class, one cell lower
-            playCells[parseFloat(landedCells[i].dataset.index) + 10].className = landedClass
-            console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[i].dataset.index) + 10])
-   
+  
+            // // * Remove Class
+            landedCells[b].classList.remove(landedClass)
+            // // console.log('cell to be removed -->', landedCells[i])
+            // // landedCells[i].className = ''
+            // // console.log('removed class ', landedClass, 'from ', landedCells[i])
+  
+            // // * Add saved class, one cell lower
+            console.log(parseFloat(landedCells[b].dataset.index) + playWidth)
+            playCells[parseFloat(landedCells[b].dataset.index) + playWidth].classList.add(landedClass)
+            console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[b].dataset.index) + 10])
+            
             
           }
         }
+
       }
-      console.log('check -->', playCellRows[19].every(item => item.className.includes('landed')))
+      // console.log('check -->', playCellRows[19].every(item => item.className.includes('landed')))
       console.log('Cleared Row Array -->', clearedRow)
       console.log('Cleared Row Count -->', clearedRowCount)
     }
@@ -416,6 +431,7 @@ function init() {
 
   // !---------- ARROW KEYS -------------------------------------
   const soundClick = new Audio('./audio/rotate2.wav')
+  soundClick.volume = 0.1
   function handleMovement(event) {
     // soundClick.play()
     const up = 38
@@ -433,6 +449,7 @@ function init() {
       if (shape.currentPos.some(item => item >= (playCellCount - playWidth)) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
         // console.log('Clicked up end')
       } else {
+        soundClick.play()
         rotate()
       }
     } else if (down === keyCode) {
@@ -443,6 +460,7 @@ function init() {
         r = 0
         checkClearedRow()
       } else {
+        soundClick.play()
         remove()
         moveDown()
       }
@@ -451,6 +469,7 @@ function init() {
       if (shape.currentPos.some(item => (item % playWidth === 0)) || shape.currentPos.some(index => playCells[index - 1].className.includes('landed'))) {
         // console.log('Clicked left End')
       } else {
+        soundClick.play()
         remove()
         shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
         shape.currentPos = shape.currentPos.map(index => index - 1)
@@ -461,6 +480,7 @@ function init() {
       if (shape.currentPos.some(item => (item % playWidth === 9)) || shape.currentPos.some(index => playCells[index + 1].className.includes('landed'))) {
         // console.log('Clicked right End')
       } else {
+        soundClick.play()
         remove()
         shape.currentPos.forEach(index => playCells[index + 1].classList.add(shape.moving))
         shape.currentPos = shape.currentPos.map(index => index + 1)
