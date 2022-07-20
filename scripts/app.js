@@ -18,8 +18,8 @@ function init() {
   function makeGrid(cellCount, cells, gridDiv) {
     for (let i = 0; i < cellCount; i++) {
       const cell = document.createElement('div')
-      // cell.innerText = i
-      // cell.style.fontSize = '0.6rem'
+      cell.innerText = i
+      cell.style.fontSize = '0.6rem'
       cell.dataset.index = i
       cells.push(cell)
       gridDiv.appendChild(cell)
@@ -128,18 +128,44 @@ function init() {
   let timer = null
   let score = 0
   let lineScore = 0
+  let gamePaused = true
+  const playCellRows = []
+  const cellsPerRow = 10
   const scoreText = document.querySelector('#scoreDisplay')
   const finalScoreText = document.querySelector('#scoreOverValue')
   const lineScoreText = document.querySelector('#linesDisplay')
+  const restartButton = document.querySelector('#restart')
+  const playPauseButton = document.querySelector('#playPause')
   scoreText.innerHTML = `${score}`
   lineScoreText.innerHTML = `${lineScore}`
-  const restartButton = document.querySelector('#restart')
   restartButton.disabled = true
+  playPauseButton.disabled = true
+
+  // *CREATE ARRAY OF CELL ROWS
+  for (let i = 0; i < playCells.length; i += cellsPerRow) {
+    const cellsGroup = playCells.slice(i, i + cellsPerRow)
+    playCellRows.push(cellsGroup)
+  }
+  console.log('playCellRows after loop -->', playCellRows)
+
+  // * PLAYPAUSE BUTTON
+  function playPause() {
+    if (gamePaused === true) {
+      gamePaused = false
+      setTimeout(drop, time)
+      playPauseButton.innerHTML = 'II'
+    } else {
+      gamePaused = true
+      clearInterval(timer)
+      playPauseButton.innerHTML = 'PLAY'
+    }
+  }
 
   function drop() {
     // Check if it hits buttom or cells with landed shape
+    gamePaused = false
     if (playCells.some(cell => cell.className.includes('moving'))) {
-      console.log('there is a moving shape!')
+      // console.log('there is a moving shape!')
       if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
         console.log('REACHED THE ENDD --> WAITING FOR NEXT SHAPE')
         remove()
@@ -171,8 +197,8 @@ function init() {
       nextShapeDisplay()
 
       // GAMEOVER FUNCTION, 
-      if (shape.startPos.some(index => playCells[index + 10].className.includes('landed')) || shape.currentPos.some(index => playCells[index - 10] < 10)) {
-        moveDown()
+      if (playCellRows[0].some(item => item.className.includes('landed'))) {
+        // moveDown()
         gameOver()
         return
       }
@@ -325,18 +351,13 @@ function init() {
   }
 
   // !------------LINE CLEARED ----------------------------------
-  const playCellRows = []
-  const cellsPerRow = 10
+
   let clearedRow = []
   let clearedRowCount = 0
   let landedCells = []
   let landedClass = null
-  for (let i = 0; i < playCells.length; i += cellsPerRow) {
-    const cellsGroup = playCells.slice(i, i + cellsPerRow)
-    playCellRows.push(cellsGroup)
-  }
 
-  console.log('playCellRows after loop -->', playCellRows)
+
 
   function checkClearedRow() {
     clearedRowCount = 0
@@ -347,67 +368,47 @@ function init() {
         clearedRow.push(i)
         clearedRowCount += 1
         for (let i = 0; i < clearedRow.length; i++) {
-          let row = playCellRows[clearedRow[i]]
-          console.log(row[0])
+          // select that certain row, save in new variable
+          const row = playCellRows[clearedRow[i]]
+          // remove class from that row
           row.forEach(cell => playCells[parseFloat(cell.dataset.index)].className = '')
-          // landedCells = playCells.filter(cell => cell.className.includes('landed'))
-          // landedCells = landedCells.filter(cell => cell.dataset.index < (clearedRow[i] * 10))
-          // console.log('filtered landed', landedCells)
-
+          // saved all rows to be shifted down in new variable, choose only landed cells on top of removed row
           landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[i] * 10))
           landedCells = landedCells.filter(cell => cell.className.includes('landed'))
           console.log('filtered landed', landedCells)
-          // for (let i = 0; i < landedCells.length; i++){
-          //   landedClass =
-          // }
+          
+          // iterate through every landedCells 
           for (let i = 0; i < landedCells.length; i++) {
+            // save class name of that cell in variable before remove
             landedClass = landedCells[i].className
+            // landedClass = 'preview'
             console.log('loop.no -->', i)
             console.log('landed class-->', landedClass)
-            // console.log('cells-->', playCells[parseFloat(landedCells[i].dataset.index)])
-            // landedCells[i].className = ''
-            // landedCells[i].removeAttribute('class')
-            // playCells[parseFloat(landedCells[i].dataset.index)].className = ''
-            // playCells[landedCells[i].dataset.index].className = ''
-            console.log('removed', landedCells[i])
-            console.log(landedCells[i].dataset.index)
-            playCells[parseFloat(landedCells[i].dataset.index) + 10].className = 'preview'
 
-            // playCells[parseFloat(landedCells[i].dataset.index)].className = landedClass
-            console.log('cell to be removed -->', playCells[(parseFloat(landedCells[i].dataset.index))])
-            let toBeRemoved = playCells[(parseFloat(landedCells[i].dataset.index))]
-            // toBeRemoved.className = 'preview'
+            // Remove Class
+            // console.log('cell to be removed -->', landedCells[i])
+            landedCells[i].className = ''
+            console.log('removed class ', landedClass, 'from ', landedCells[i])
 
-            // playCells[(parseFloat(landedCells[i].dataset.index) + 10)].className = landedClass
-          
-            
-            // playCells[(parseFloat(landedCells[i].dataset.index))].className = ''
-            // playCells[parseFloat(landedCells[i].dataset.index) + 10].classList.add(`${landedClass}`)
+            // Add saved class, one cell lower
+            playCells[parseFloat(landedCells[i].dataset.index) + 10].className = landedClass
             console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[i].dataset.index) + 10])
+   
+            
           }
-          landedCells.forEach(item => item.className = '')
         }
       }
+      console.log('check -->', playCellRows[19].every(item => item.className.includes('landed')))
+      console.log('Cleared Row Array -->', clearedRow)
+      console.log('Cleared Row Count -->', clearedRowCount)
     }
 
-
-
-
-
-
-
-
     // console.log('AfterLoop', landedCells)
-
-
 
     lineScore = lineScore + clearedRowCount
     score = score + (500 * clearedRowCount)
     lineScoreText.innerHTML = `${lineScore}`
     scoreText.innerHTML = `${score}`
-    console.log('check -->', playCellRows[19].every(item => item.className.includes('landed')))
-    console.log('Cleared Row Array -->', clearedRow)
-    console.log('Cleared Row Count -->', clearedRowCount)
   }
 
 
@@ -424,6 +425,8 @@ function init() {
     const space = 32
     const enter = 13
     const keyCode = event.keyCode
+    // event.preventDefault()
+    event.target.blur()
 
     if (up === keyCode) {
       console.log('Clicked up')
@@ -433,15 +436,18 @@ function init() {
         rotate()
       }
     } else if (down === keyCode) {
+      event.preventDefault()
       if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
         // console.log('Clicked down end')
         inactive()
         r = 0
+        checkClearedRow()
       } else {
         remove()
         moveDown()
       }
     } else if (left === keyCode) {
+      event.preventDefault()
       if (shape.currentPos.some(item => (item % playWidth === 0)) || shape.currentPos.some(index => playCells[index - 1].className.includes('landed'))) {
         // console.log('Clicked left End')
       } else {
@@ -451,6 +457,7 @@ function init() {
 
       }
     } else if (right === keyCode) {
+      event.preventDefault()
       if (shape.currentPos.some(item => (item % playWidth === 9)) || shape.currentPos.some(index => playCells[index + 1].className.includes('landed'))) {
         // console.log('Clicked right End')
       } else {
@@ -459,16 +466,20 @@ function init() {
         shape.currentPos = shape.currentPos.map(index => index + 1)
       }
     } else if (space === keyCode) {
-      while (!(shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed')))) {
-        remove()
-        moveDown()
+      event.preventDefault()
+      if (gamePaused === true) {
+        console.log('space paused')
+      } else {
+        while (!(shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed')))) {
+          remove()
+          moveDown()
+        }
+        score += 5
+        scoreText.innerHTML = `${score}`
+        inactive()
+        checkClearedRow()
+        r = 0
       }
-
-      score += 5
-      scoreText.innerHTML = `${score}`
-      inactive()
-      checkClearedRow()
-      r = 0
     } else if (enter === keyCode) {
       if (document.querySelector('#gameOver').style.display === 'flex') {
         document.querySelector('#gameOver').style.display = 'none'
@@ -481,17 +492,21 @@ function init() {
         lineScore = 0
         scoreText.innerHTML = `${score}`
         restartButton.disabled = false
+        playPauseButton.disabled = false
         // playCells.map(index => playCells[index].classList.remove('landed'))
         drop()
       } else {
         document.querySelector('#startGame').style.display = 'none'
         document.querySelector('#playGrid').style.position = 'relative'
+        gamePaused = false
         restartButton.disabled = false
+        playPauseButton.disabled = false
         drop()
       }
     }
   }
 
+  playPauseButton.addEventListener('click', playPause)
   restartButton.addEventListener('click', gameOver)
   document.addEventListener('keydown', handleMovement)
 }
