@@ -56,6 +56,7 @@ function init() {
   const shape2 = new Shape('I', [-7, -6, -5, -4], {
     one: [18, 9, 0, -9],
     two: [2, 11, 20, 29],
+    // two: [-18, -9, 0, 9],
     three: [18, 9, 0, -9],
     four: [-18, -9, 0, 9]
   })
@@ -105,13 +106,13 @@ function init() {
     } else if (randomHist.length < 5) {
       while (randomHist.some(item => item === random)) {
         random = Math.floor(Math.random() * 7 + 1)
-        console.log('looping1')
+        // console.log('looping1')
       }
       randomHist.push(random)
     } else if (randomHist.length >= 5) {
       while (randomHist.some(item => item === random)) {
         random = Math.floor(Math.random() * 7 + 1)
-        console.log('looping2')
+        // console.log('looping2')
       }
       randomHist.shift()
       randomHist.push(random)
@@ -129,11 +130,12 @@ function init() {
   let score = 0
   let lineScore = 0
   let gamePaused = true
+  let sfxOn = true
   // let linePerLevel = 10
   let currentLevel = 1
   let nextLevel = 5
   let scoreMultiplier = 0
-  let highScore = localStorage.getItem("highscore")
+  let highScore = localStorage.getItem('highScore')
 
   const playCellRows = []
   const cellsPerRow = 10
@@ -142,23 +144,84 @@ function init() {
   const finalScoreText = document.querySelector('#scoreOverValue')
   const lineScoreText = document.querySelector('#linesDisplay')
   const levelText = document.querySelector('#levelDisplay')
+  const sfxButton = document.querySelector('#sfx')
   const restartButton = document.querySelector('#restart')
   const playPauseButton = document.querySelector('#playPause')
+  sfxButton.innerHTML = 'SFX OFF'
   scoreText.innerHTML = score
   lineScoreText.innerHTML = `${lineScore}`
   levelText.innerHTML = currentLevel
+  checkHighScore()
+  highScoreText.innerHTML = highScore
   restartButton.disabled = true
   playPauseButton.disabled = true
+
+
+  const soundClick = new Audio('./audio/rotate2.wav')
+  // const soundHardDrop = new Audio('./audio/harddrop.wav')
+  const soundHardDrop = new Audio('./audio/hardDrop.m4a')
+  const soundInActive = new Audio('./audio/inactive.wav')
+  // const soundClear = new Audio('./audio/clearline.wav')bb
+  const soundPaused = new Audio('./audio/paused2.m4a')
+  const soundClear = new Audio('./audio/mixkit-fairy-cartoon-success-voice-344.wav')
+  const soundLevelUp = new Audio('./audio/mixkit-bonus-earned-in-video-game-2058.wav')
+  const soundEnter = new Audio('./audio/menuconfirm.wav')
+  const soundStart = new Audio('./audio/start.wav')
+  const soundBackground = new Audio('./audio/background.m4a')
+  const soundGameOver = new Audio('./audio/gameover.wav')
+  soundClick.volume = 0.3
+  soundHardDrop.volume = 1
+  soundClear.volume = 0.3
+  soundBackground.volume = 0.2
+  soundGameOver.volume = 0.3
+  soundEnter.volume = 0.3
+  soundStart.volume = 0.3
+
+  soundBackground.loop = true
+
+  function setAudio() {
+    if (sfxOn === true) {
+      sfxOn = false
+      soundClick.volume = 0
+      soundHardDrop.volume = 0
+      soundClear.volume = 0
+      soundBackground.volume = 0
+      soundGameOver.volume = 0
+      soundEnter.volume = 0
+      soundStart.volume = 0
+      sfxButton.innerHTML = 'SFX ON'
+
+    } else if (sfxOn === false) {
+      sfxOn = true
+      soundClick.volume = 0.3
+      soundHardDrop.volume = 1
+      soundClear.volume = 0.3
+      soundBackground.volume = 0.2
+      soundGameOver.volume = 0.3
+      soundEnter.volume = 0.3
+      soundStart.volume = 0.3
+      sfxButton.innerHTML = 'SFX OFF'
+    }
+  }
+
+  // soundClick.volume = 0.3
+  // soundHardDrop.volume = 1
+  // soundClear.volume = 0.3
+  // soundBackground.volume = 0.2
+  // soundGameOver.volume = 0.3
+  // soundEnter.volume = 0.3
+  // soundStart.volume = 0.3
 
   // *CREATE ARRAY OF CELL ROWS
   for (let i = 0; i < playCells.length; i += cellsPerRow) {
     const cellsGroup = playCells.slice(i, i + cellsPerRow)
     playCellRows.push(cellsGroup)
   }
-  console.log('playCellRows after loop -->', playCellRows)
+  // console.log('playCellRows after loop -->', playCellRows)
 
   // * PLAYPAUSE BUTTON
   function playPause() {
+    soundPaused.play()
     if (gamePaused === true) {
       gamePaused = false
       setTimeout(drop, time)
@@ -185,6 +248,7 @@ function init() {
       } else {
         remove()
         moveDown()
+        console.log('CURREENTT SHAPE DROP', shape.shape)
       }
       timer = setTimeout(drop, time)
 
@@ -213,27 +277,37 @@ function init() {
         return
       }
       moveDown()
+      console.log('CURREENTT SHAPE DROP', shape.shape)
       timer = setTimeout(drop, time)
     }
   }
   // ! ----------- FUNCTIONS ------------------
   function gameOver() {
+    soundBackground.pause()
+    soundGameOver.play()
     document.querySelector('#gameOver').style.display = 'flex'
     document.querySelector('#playGrid').style.position = 'absolute'
     finalScoreText.innerHTML = `${score}`
     clearInterval(timer)
+    checkHighScore()
+  }
 
-    if (highScore !== 0) {
-      if (score > highScore) {
-        localStorage.setItem('highScore', score)
-        highScoreText.innerHTML = highScore
-      }
+  function checkHighScore() {
+    if (highScore === null) {
+      highScore = 0
+    } else if (score > highScore) {
+      localStorage.setItem('highScore', score)
+      highScoreText.innerHTML = highScore
+      console.log('SAVE HIGH SCORE')
     }
+    console.log('highSCOREEE', highScore)
+    console.log('SCOREEEE', score)
   }
 
 
   function remove() {
     shape.currentPos.forEach(index => playCells[index].classList.remove(shape.moving))
+    console.log('removed')
   }
 
   function moveDown() {
@@ -242,6 +316,7 @@ function init() {
   }
 
   function inactive() {
+    soundInActive.play()
     shape.currentPos.forEach(index => playCells[index].classList.add(shape.landed))
     shape.currentPos.forEach(index => playCells[index].classList.remove(shape.moving))
   }
@@ -251,16 +326,16 @@ function init() {
     nextDisplayPos = nextShape.startPos.map(cell => cell + 20)
     nextDisplayPos = nextDisplayPos.map(cell => {
       if (cell <= 6) {
-        console.log('if 1')
+        // console.log('if 1')
         return cell -= 3
       } else if (cell <= 16) {
-        console.log('if 2')
+        // console.log('if 2')
         return cell -= 9
       } else if (cell <= 26) {
-        console.log('if 3')
+        // console.log('if 3')
         return cell -= 15
       } else if (cell <= 36) {
-        console.log('if 4')
+        // console.log('if 4')
         console.log(cell -= 10)
         if (nextShape.shape === 'Z') {
           return cell -= 13
@@ -281,90 +356,178 @@ function init() {
 
   // !---------------ROTATE------------------------------------------------------
   let r = 0
+  let rot = []
+  
   function rotate() {
+    const currentShape = shape.shape
     // soundClick.play()
+    let testRotate = []
+    let didItRotate = true
     r++
     if (r > 3) {
       r = 0
     }
-    // console.log('r before rot', r)
-    const rot = Object.values(shape.rot)[r]
-    // console.log('rotation offset -->', rot)
-    // console.log('shape.currentPos Before-->', shape.currentPos)
-    for (let i = 0; i < 4; i++) {
-      remove()
-      shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
+    console.log('r before rot', r)
+    console.log(shape.currentPos)
+    console.log('CURRENT SHAPE', currentShape)
+    console.log(shape.shape === 'I')
+    console.log(r === 1)
+    console.log(shape.currentPos[0] > 39)
+    console.log(r === 1 && shape.shape === 'I' && shape.currentPos.some(item => item > 39))
 
+    if (r === 1 && shape.shape === 'I' && shape.currentPos.some(item => item > 39)) {
+      rot = [-18, -9, 0, 9]
+    } else {
+      rot = Object.values(shape.rot)[r]
     }
+
+    // const rot = Object.values(shape.rot)[r]
+    console.log('rotation offset -->', rot)
+    // console.log('shape.currentPos Before-->', shape.currentPos)
+    // for (let i = 0; i < 4; i++) {
+    //   remove()
+    //   shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
+
+    // }
+    // console.log('Test Current BEFORE loop', shape.currentPos)
+    for (let i = 0; i < 4; i++) {
+      testRotate.push(parseFloat(shape.currentPos[i]) + parseFloat(rot[i]))
+      console.log(testRotate)
+      // if (playCells[testRotate].className.includes('landed')) {
+      //   console.log('CANNOT ROTATEEEE')
+      //   // shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+      //   didItRotate = false
+
+      //   // console.log('r before cant rotate', r)
+      //   // console.log('adjust r back', r)
+      // } else {
+      //   // remove()
+      //   // shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
+      //   didItRotate = true
+      // }
+    }
+    if (shape.shape === 'I' && (r === 1 || r === 3)) {
+      didItRotate = true
+      shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+      console.log('THIS IS I')
+    } else if (testRotate.some(index => playCells[index].className.includes('landed'))) {
+      console.log('CANNOT ROTATEEEE')
+      // shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+      didItRotate = false
+      r -= 1
+
+      // console.log('r before cant rotate', r)
+      // console.log('adjust r back', r)
+    } else {
+      // remove()
+      // shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
+      didItRotate = true
+      console.log(playCells[testRotate[0]].className.includes('landed'))
+      console.log(playCells[testRotate[1]].className.includes('landed'))
+      console.log(playCells[testRotate[2]].className.includes('landed'))
+      console.log(playCells[testRotate[3]].className.includes('landed'))
+    }
+
+    console.log('current didItRotate', didItRotate)
+    // }
     // console.log('Test Current after loop', shape.currentPos)
     // PREVENT OVERFLOW LEFT
-    if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[3] % playWidth === 2) && (shape.currentPos[0] % playWidth === 9)) {
-      shape.currentPos.forEach(index => playCells[index + 1].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index + 1)
-      console.log('if 1')
-    } else if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[0] % playWidth === 8) && (shape.currentPos[3] % playWidth === 1)) {
-      shape.currentPos.forEach(index => playCells[index + 2].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index + 2)
-      console.log('if 2')
-    } else if ((r === 1 || r === 3) && (shape.currentPos[0] === shape.currentPos[3] - 30) && (shape.currentPos[0] < 0)) {
-      shape.currentPos.forEach(index => playCells[index + 30].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index + 30)
-      console.log('if start')
-    } else if (shape.currentPos.every(item => item % playWidth === 9)) {
-      shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index - 1)
-      console.log('if 3')
-    } else if ((r === 2) && shape.currentPos.some(item => item % playWidth === 2)) {
-      shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-      console.log('if 4')
+    // if (shape.currentPos.some(index => playCells[index].className.includes('landed'))){
+    //   console.log('CANNOT ROTATEEEE')
+    //   console.log('r before cant rotate', r)
+    //   r --
+    //   console.log('adjust r back', r)
+    // } else 
+    if (didItRotate === true) {
+      for (let i = 0; i < 4; i++) {
+        console.log('CURRENT POSITION', shape.currentPos)
+        remove()
+        shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
 
-      // PREVENT OVERFLOW RIGHT
-    } else if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[0] % playWidth === 6) && (shape.currentPos[3] % playWidth === 9)) {
-      shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-      // shape.currentPos = shape.currentPos.map(index => index - 1 )
-      console.log('if 6')
-    } else if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[0] % playWidth === 7) /*&& (shape.currentPos[3] % playWidth === 0)*/) {
-      shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index - 1)
-      console.log('if 7')
-    } else if ((r === 2) && (shape.currentPos[0] % playWidth === 8) && (shape.currentPos[3] % playWidth === 0)) {
-      shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index - 1)
-      console.log('if 5?')
-    } else if ((r === 2) && shape.currentPos.some(item => item % playWidth === 0)) {
-      shape.currentPos.forEach(index => playCells[index + 1].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index + 1)
-      console.log('if 5')
-    } else if ((r === 0) && (shape.currentPos[0] % playWidth === 0) && (shape.currentPos[3] % playWidth === 0)) {
-      shape.currentPos.forEach(index => playCells[index + 1].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index + 1)
-      console.log('if 5?')
-    } else if ((r === 0) && shape.currentPos.some(item => item % playWidth === 7)) {
-      shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-      console.log('if 9')
-    } else if ((r === 0) && shape.currentPos.some(item => item % playWidth === 9)) {
-      shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index - 1)
-      console.log('if 10')
+      }
+      // *if shape is I
+      if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[3] % playWidth === 2) && (shape.currentPos[0] % playWidth === 9)) {
+        shape.currentPos.forEach(index => playCells[index + 1].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index + 1)
+        console.log('if 1')
+        // *if shape is I
+      } else if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[0] % playWidth === 8) && (shape.currentPos[3] % playWidth === 1)) {
+        shape.currentPos.forEach(index => playCells[index + 2].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index + 2)
+        console.log('if 2')
+        // *if shape is I
+      } else if ((r === 1 || r === 3) && (shape.currentPos[0] === shape.currentPos[3] - 30) && (shape.currentPos[0] < 0)) {
+        shape.currentPos.forEach(index => playCells[index + 30].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index + 30)
+        console.log('if start')
+      } else if (shape.currentPos.every(item => item % playWidth === 9)) {
+        shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index - 1)
+        console.log('if 3')
+      } else if ((r === 2) && shape.currentPos.some(item => item % playWidth === 2)) {
+        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+        console.log('if 4')
+      // } else if ((r === 2) && shape.shape === 'I' && shape.currentPos.some(item => item >= playCellCount - 10)) {
+      //   shape.currentPos.forEach(index => playCells[index - 20].classList.add(shape.moving))
+      //   shape.currentPos = shape.currentPos.map(index => index - 20)
+      //   console.log('IF I ROTATION 2')
+        // PREVENT OVERFLOW RIGHT
+        // *if shape is I
+      } else if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[0] % playWidth === 6) && (shape.currentPos[3] % playWidth === 9)) {
+        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+        // shape.currentPos = shape.currentPos.map(index => index - 1 )
+        console.log('if 6')
+        // *if shape is I
+      } else if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[0] % playWidth === 7) /*&& (shape.currentPos[3] % playWidth === 0)*/) {
+        shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index - 1)
+        console.log('if 7')
+      } else if ((r === 2) && (shape.currentPos[0] % playWidth === 8) && (shape.currentPos[3] % playWidth === 0)) {
+        shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index - 1)
+        console.log('if 5?')
+      } else if ((r === 2) && shape.currentPos.some(item => item % playWidth === 0)) {
+        shape.currentPos.forEach(index => playCells[index + 1].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index + 1)
+        console.log('if 5')
+        // *if shape is L 
+      } else if ((r === 0) && (shape.currentPos[0] % playWidth === 0) && (shape.currentPos[3] % playWidth === 0)) {
+        shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index - 1)
+        console.log('if 5?')
+      } else if ((r === 0) && shape.currentPos.some(item => item % playWidth === 7)) {
+        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+        console.log('if 9')
+      } else if ((r === 0) && shape.currentPos.some(item => item % playWidth === 9)) {
+        shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index - 1)
+        console.log('if 10')
 
 
-      // PREVENT OVERFLOW BOTTOM
-    } else if ((r === 1 | r === 3) && (shape.currentPos[0] === shape.currentPos[3] - 30) && shape.currentPos.some(item => item >= 200)) {
-      shape.currentPos.forEach(index => playCells[index - 10].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index - 10)
-      console.log('if 12')
-    } else if ((r === 1 | r === 3) && shape.currentPos.some(item => item >= 170) && shape.currentPos.some(item => item < 180)) {
-      shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-      console.log('if 11')
-    } else if ((r === 1 | r === 3) && shape.currentPos.some(item => item >= playCellCount - 10)) {
-      shape.currentPos.forEach(index => playCells[index - 10].classList.add(shape.moving))
-      shape.currentPos = shape.currentPos.map(index => index - 10)
+        // PREVENT OVERFLOW BOTTOM
+        // *if shape is I
+      } else if ((r === 1 | r === 3) && (shape.currentPos[0] === shape.currentPos[3] - 30) && shape.currentPos.some(item => item >= 200)) {
+        shape.currentPos.forEach(index => playCells[index - 10].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index - 10)
+        console.log('if 12')
+      } else if ((r === 1 | r === 3) && shape.currentPos.some(item => item >= 170) && shape.currentPos.some(item => item < 180)) {
+        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+        console.log('if 11')
+      } else if ((r === 1 | r === 3) && shape.currentPos.some(item => item >= playCellCount - 10)) {
+        shape.currentPos.forEach(index => playCells[index - 10].classList.add(shape.moving))
+        shape.currentPos = shape.currentPos.map(index => index - 10)
 
+      } else {
+        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+        console.log('if 13')
+      }
     } else {
-      shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-      console.log('if 13')
+      console.log('DID NOT ROTATEEEE')
+      console.log('Test Current after loop', shape.currentPos)
+      // shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
     }
     // console.log('After IF', shape.currentPos)
+
   }
 
   // !------------LINE CLEARED ----------------------------------
@@ -387,6 +550,7 @@ function init() {
     for (let i = 19; i >= 0; i--) {
 
       if (playCellRows[i].every(item => item.className.includes('landed'))) {
+
         clearedRow.push(i)
         clearedRowCount += 1
         lineScore = lineScore + 1
@@ -408,11 +572,12 @@ function init() {
       row.forEach(cell => playCells[parseFloat(cell.dataset.index)].className = '')
       // saved all rows to be shifted down in new variable, choose only landed cells on top of removed row
       if (c === clearedRow.length - 1) {
+        soundClear.play()
         ////console.log('IF C 1, TOP REMOVED ROW')
         landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[c] * playWidth))
         landedCells = landedCells.filter(cell => cell.className.includes('landed'))
-        // //console.log('filtered landed loop', c, ' --> ', landedCells)
-        // //console.log('Removed Row loop', c, ' --> ', playCellRows[clearedRow[c]])
+        console.log('filtered landed loop', c, ' --> ', landedCells)
+        console.log('Removed Row loop', c, ' --> ', playCellRows[clearedRow[c]])
         // iterate through every landedCells 
         for (let b = landedCells.length - 1; b >= 0; b--) {
           // //console.log('SHIFT CELLLLSSSS ROW -->', b)
@@ -448,17 +613,19 @@ function init() {
             console.log('landed class-->', landedClass)
 
             // // * Remove Class
-            landedCells[b].classList.remove(landedClass)
-            // // console.log('cell to be removed -->', landedCells[i])
-            // // landedCells[i].className = ''
+            // landedCells[b].classList.remove(landedClass)
+            // console.log('cell to be removed -->', landedCells[i])
+            landedCells[b].className = ''
             // // console.log('removed class ', landedClass, 'from ', landedCells[i])
 
             // * Add saved class, one cell lower
+            console.log('SHIFT MULTI IN NOT TOP ROW', shiftMulti)
             ////console.log(parseFloat(landedCells[b].dataset.index) + playWidth * shiftMulti)
             playCells[parseFloat(landedCells[b].dataset.index) + playWidth * shiftMulti].classList.add(landedClass)
-            ////console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[b].dataset.index) + 10])
-            shiftMulti = 1
+            console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[b].dataset.index) + 10 * shiftMulti])
+            // shiftMulti = 1
           }
+          shiftMulti = 1
         }
 
       }
@@ -474,11 +641,12 @@ function init() {
 
   // * SCORES AND LEVELS
   function checkLevel() {
-    console.log('NEXT LEVEL-->', nextLevel)
-    console.log('currentLevel-->', currentLevel)
-    console.log('Lines Cleared -->', lineScore)
+    // console.log('NEXT LEVEL-->', nextLevel)
+    // console.log('currentLevel-->', currentLevel)
+    // console.log('Lines Cleared -->', lineScore)
     if (lineScore >= nextLevel) {
       console.log('LEVEL UP')
+      soundLevelUp.play()
       if (currentLevel > 9) {
         time = 100
         nextLevel = nextLevel + 10
@@ -500,8 +668,7 @@ function init() {
 
 
   // !---------- ARROW KEYS -------------------------------------
-  const soundClick = new Audio('./audio/rotate2.wav')
-  soundClick.volume = 0.1
+
   function handleMovement(event) {
     // soundClick.play()
     const up = 38
@@ -516,8 +683,10 @@ function init() {
 
     if (up === keyCode) {
       console.log('Clicked up')
-      if (shape.currentPos.some(item => item >= (playCellCount - playWidth)) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
-        // console.log('Clicked up end')
+
+      if (shape.currentPos.some(item => item >= (playCellCount - playWidth)) ||
+        shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
+        console.log('Clicked up end')
       } else {
         soundClick.play()
         rotate()
@@ -557,12 +726,16 @@ function init() {
       }
     } else if (space === keyCode) {
       event.preventDefault()
+      // soundInActive.volume = 0.5
+      // soundInActive.play()
+
       if (gamePaused === true) {
         console.log('space paused')
       } else {
         while (!(shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed')))) {
           remove()
           moveDown()
+          soundHardDrop.play()
         }
         score += 5
         scoreText.innerHTML = `${score}`
@@ -576,6 +749,9 @@ function init() {
         document.querySelector('#playGrid').style.position = 'relative'
         // document.querySelector('#playGrid div').classList.remove('landed')
         console.log('GAME OVER ENTER')
+        soundEnter.play()
+        soundStart.play()
+        soundBackground.play()
         playCells.forEach(item => item.className = '')
         nextCells.forEach(item => item.className = '')
         score = 0
@@ -593,15 +769,19 @@ function init() {
         document.querySelector('#startGame').style.display = 'none'
         document.querySelector('#playGrid').style.position = 'relative'
         gamePaused = false
+        soundEnter.play()
+        soundStart.play()
+        soundBackground.play()
         restartButton.disabled = false
         playPauseButton.disabled = false
         drop()
       }
     }
   }
-
+  // soundBackground.addEventListener('ended', function(){soundBackground.play()})
   playPauseButton.addEventListener('click', playPause)
   restartButton.addEventListener('click', gameOver)
+  sfxButton.addEventListener('click', setAudio)
   document.addEventListener('keydown', handleMovement)
 }
 
