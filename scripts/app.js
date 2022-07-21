@@ -129,15 +129,24 @@ function init() {
   let score = 0
   let lineScore = 0
   let gamePaused = true
+  // let linePerLevel = 10
+  let currentLevel = 1
+  let nextLevel = 5
+  let scoreMultiplier = 0
+  let highScore = localStorage.getItem("highscore")
+
   const playCellRows = []
   const cellsPerRow = 10
+  const highScoreText = document.querySelector('#highScore')
   const scoreText = document.querySelector('#scoreDisplay')
   const finalScoreText = document.querySelector('#scoreOverValue')
   const lineScoreText = document.querySelector('#linesDisplay')
+  const levelText = document.querySelector('#levelDisplay')
   const restartButton = document.querySelector('#restart')
   const playPauseButton = document.querySelector('#playPause')
-  scoreText.innerHTML = `${score}`
+  scoreText.innerHTML = score
   lineScoreText.innerHTML = `${lineScore}`
+  levelText.innerHTML = currentLevel
   restartButton.disabled = true
   playPauseButton.disabled = true
 
@@ -160,6 +169,7 @@ function init() {
       playPauseButton.innerHTML = 'PLAY'
     }
   }
+
 
   function drop() {
     // Check if it hits buttom or cells with landed shape
@@ -212,6 +222,13 @@ function init() {
     document.querySelector('#playGrid').style.position = 'absolute'
     finalScoreText.innerHTML = `${score}`
     clearInterval(timer)
+
+    if (highScore !== 0) {
+      if (score > highScore) {
+        localStorage.setItem('highScore', score)
+        highScoreText.innerHTML = highScore
+      }
+    }
   }
 
 
@@ -356,6 +373,8 @@ function init() {
   let clearedRowCount = 0
   let landedCells = []
   let landedClass = null
+  let shiftMulti = 1
+
 
 
 
@@ -363,70 +382,121 @@ function init() {
     clearedRowCount = 0
     clearedRow = []
 
-    
+
     // for (let i = 0; i <= 19; i++) {
     for (let i = 19; i >= 0; i--) {
 
       if (playCellRows[i].every(item => item.className.includes('landed'))) {
         clearedRow.push(i)
         clearedRowCount += 1
-        for (let c = 0; c < clearedRow.length; c++) {
-        // for (let c = clearedRow.length - 1; c >= 0; c--) {
-          console.log('LAST ITEM OF CLEARED ROW , FIRST LOOOOP ->', c)
-          // select that certain row, save in new variable
-          const row = playCellRows[clearedRow[c]]
-          // remove class from that row
-          row.forEach(cell => playCells[parseFloat(cell.dataset.index)].className = '')
-          // saved all rows to be shifted down in new variable, choose only landed cells on top of removed row
-          if (c === clearedRow.length - 1){
-            landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[c] * 10))
-          } else {
-            landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[c] * 10) && cell.dataset.index > (clearedRow[c] * 10) - 19 )
-          }
-          // landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[i] * 10))
-          landedCells = landedCells.filter(cell => cell.className.includes('landed'))
-          console.log('filtered landed loop', c, ' --> ', landedCells)
-          console.log('Removed Row loop', c, ' --> ', playCellRows[clearedRow[c]])
-          
-          // iterate through every landedCells 
+        lineScore = lineScore + 1
+        lineScoreText.innerHTML = `${lineScore}`
+        console.log('LINE SCORE-->', lineScore)
+        checkLevel()
+        console.log('level checked')
+      }
+      // //console.log('check -->', playCellRows[19].every(item => item.className.includes('landed')))
+      // //console.log('Cleared Row Array -->', clearedRow)
+      //// console.log('Cleared Row Count -->', clearedRowCount)
+
+    }
+    for (let c = 0; c < clearedRow.length; c++) {
+      //// console.log('LAST ITEM OF CLEARED ROW , FIRST LOOOOP ->', c)
+      // select that certain row, save in new variable
+      const row = playCellRows[clearedRow[c]]
+      // remove class from that row
+      row.forEach(cell => playCells[parseFloat(cell.dataset.index)].className = '')
+      // saved all rows to be shifted down in new variable, choose only landed cells on top of removed row
+      if (c === clearedRow.length - 1) {
+        ////console.log('IF C 1, TOP REMOVED ROW')
+        landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[c] * playWidth))
+        landedCells = landedCells.filter(cell => cell.className.includes('landed'))
+        // //console.log('filtered landed loop', c, ' --> ', landedCells)
+        // //console.log('Removed Row loop', c, ' --> ', playCellRows[clearedRow[c]])
+        // iterate through every landedCells 
+        for (let b = landedCells.length - 1; b >= 0; b--) {
+          // //console.log('SHIFT CELLLLSSSS ROW -->', b)
+          // save class name of that cell in variable before remove
+          landedClass = landedCells[b].className
+          //// console.log('loop.no -->', i)
+          // //console.log('landed class-->', landedClass)
+          landedCells[b].classList.remove(landedClass)
+          //// console.log(parseFloat(landedCells[b].dataset.index) + playWidth * clearedRow.length)
+          playCells[parseFloat(landedCells[b].dataset.index) + playWidth * clearedRow.length].classList.add(landedClass)
+          //// console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[b].dataset.index) + playWidth * clearedRow.length])
+        }
+
+      } else {
+        console.log('IF C 2 REMOVED ROW NOT TOP')
+
+        landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[c] * playWidth) && cell.dataset.index > (clearedRow[c] * 10) - 11)
+        landedCells = landedCells.filter(cell => cell.className.includes('landed'))
+        console.log('filtered landed loop', c, ' --> ', landedCells)
+        console.log('Removed Row loop', c, ' --> ', playCellRows[clearedRow[c]])
+        if (clearedRow.includes(parseFloat(landedCells[0].dataset.index) / 10)) {
+          console.log('ABOVE ROW EMPPPTYYYYYY ----> NO NEED TO REMOVE!!!')
+          shiftMulti += 1
+          console.log('SHIFT MULTIPLIER -->', shiftMulti)
+          //  check if bottom row ( clearedRow[c]) is empty --> how many rows empty? --> shft down that # of rows 
+        } else {
           for (let b = landedCells.length - 1; b >= 0; b--) {
             console.log('SHIFT CELLLLSSSS ROW -->', b)
             // save class name of that cell in variable before remove
             landedClass = landedCells[b].className
-            // landedClass = 'preview'
-            // console.log('loop.no -->', i)
+            // //landedClass = 'preview'
+            //// console.log('loop.no -- >', i)
             console.log('landed class-->', landedClass)
-  
+
             // // * Remove Class
             landedCells[b].classList.remove(landedClass)
             // // console.log('cell to be removed -->', landedCells[i])
             // // landedCells[i].className = ''
             // // console.log('removed class ', landedClass, 'from ', landedCells[i])
-  
-            // // * Add saved class, one cell lower
-            console.log(parseFloat(landedCells[b].dataset.index) + playWidth)
-            playCells[parseFloat(landedCells[b].dataset.index) + playWidth].classList.add(landedClass)
-            console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[b].dataset.index) + 10])
-            
-            
+
+            // * Add saved class, one cell lower
+            ////console.log(parseFloat(landedCells[b].dataset.index) + playWidth * shiftMulti)
+            playCells[parseFloat(landedCells[b].dataset.index) + playWidth * shiftMulti].classList.add(landedClass)
+            ////console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[b].dataset.index) + 10])
+            shiftMulti = 1
           }
         }
 
       }
-      // console.log('check -->', playCellRows[19].every(item => item.className.includes('landed')))
-      console.log('Cleared Row Array -->', clearedRow)
-      console.log('Cleared Row Count -->', clearedRowCount)
     }
+    //// console.log('AfterLoop', landedCells)
 
-    // console.log('AfterLoop', landedCells)
-
-    lineScore = lineScore + clearedRowCount
-    score = score + (500 * clearedRowCount)
-    lineScoreText.innerHTML = `${lineScore}`
+    //// lineScore = lineScore + clearedRowCount
+    //// lineScoreText.innerHTML = `${lineScore}`
+    score = score + (500 * clearedRowCount) + scoreMultiplier
     scoreText.innerHTML = `${score}`
+
   }
 
-
+  // * SCORES AND LEVELS
+  function checkLevel() {
+    console.log('NEXT LEVEL-->', nextLevel)
+    console.log('currentLevel-->', currentLevel)
+    console.log('Lines Cleared -->', lineScore)
+    if (lineScore >= nextLevel) {
+      console.log('LEVEL UP')
+      if (currentLevel > 9) {
+        time = 100
+        nextLevel = nextLevel + 10
+        scoreMultiplier += 100
+      } else if (currentLevel > 4) {
+        time -= 100
+        nextLevel = nextLevel + 10
+        scoreMultiplier = 50
+      } else {
+        time -= 50
+        nextLevel = nextLevel + 5
+        scoreMultiplier = 10
+      }
+      console.log('time-->', time)
+      currentLevel = currentLevel + 1
+      levelText.innerHTML = currentLevel
+    }
+  }
 
 
   // !---------- ARROW KEYS -------------------------------------
@@ -510,7 +580,11 @@ function init() {
         nextCells.forEach(item => item.className = '')
         score = 0
         lineScore = 0
+        scoreMultiplier = 0
+        time = 1000
+        currentLevel = 1
         scoreText.innerHTML = `${score}`
+        levelText.innerHTML = currentLevel
         restartButton.disabled = false
         playPauseButton.disabled = false
         // playCells.map(index => playCells[index].classList.remove('landed'))

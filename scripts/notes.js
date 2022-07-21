@@ -182,5 +182,124 @@ function init() {
   }
 
   console.log('playCellRows after loop -->', playCellRows)
+
+
+  function checkClearedRow() {
+    clearedRowCount = 0
+    clearedRow = []
+
+    for (let i = 0; i <= 19; i++) {
+      if (playCellRows[i].every(item => item.className.includes('landed'))) {
+        clearedRow.push(i)
+        clearedRowCount += 1
+        for (let i = 0; i < clearedRow.length; i++) {
+          let row = playCellRows[clearedRow[i]]
+          console.log(row[0])
+          row.forEach(cell => playCells[parseFloat(cell.dataset.index)].className = '')
+          // landedCells = playCells.filter(cell => cell.className.includes('landed'))
+          // landedCells = landedCells.filter(cell => cell.dataset.index < (clearedRow[i] * 10))
+          // console.log('filtered landed', landedCells)
+
+          landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[i] * 10))
+          landedCells = landedCells.filter(cell => cell.className.includes('landed'))
+          console.log('filtered landed', landedCells)
+          // for (let i = 0; i < landedCells.length; i++){
+          //   landedClass =
+          // }
+          for (let i = 0; i < landedCells.length; i++) {
+            landedClass = landedCells[i].className
+            console.log('loop.no -->', i)
+            console.log('landed class-->', landedClass)
+            // console.log('cells-->', playCells[parseFloat(landedCells[i].dataset.index)])
+            // landedCells[i].className = ''
+            // landedCells[i].removeAttribute('class')
+            // playCells[parseFloat(landedCells[i].dataset.index)].className = ''
+            // playCells[landedCells[i].dataset.index].className = ''
+            console.log('removed', landedCells[i])
+            console.log(landedCells[i].dataset.index)
+            playCells[parseFloat(landedCells[i].dataset.index) + 10].className = 'preview'
+
+            // playCells[parseFloat(landedCells[i].dataset.index)].className = landedClass
+            console.log('cell to be removed -->', playCells[(parseFloat(landedCells[i].dataset.index))])
+            let toBeRemoved = playCells[(parseFloat(landedCells[i].dataset.index))]
+            // toBeRemoved.className = 'preview'
+
+            // playCells[(parseFloat(landedCells[i].dataset.index) + 10)].className = landedClass
+
+
+            // playCells[(parseFloat(landedCells[i].dataset.index))].className = ''
+            // playCells[parseFloat(landedCells[i].dataset.index) + 10].classList.add(`${landedClass}`)
+            console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[i].dataset.index) + 10])
+          }
+          // landedCells.forEach(item => item.className = '')
+        }
+      }
+    }
+  }
+
+// ! -------- AHHHHH -----------------------------------------------
+
+  // for (let i = 0; i <= 19; i++) {
+  for (let i = 19; i >= 0; i--) {
+
+    if (playCellRows[i].every(item => item.className.includes('landed'))) {
+      clearedRow.push(i)
+      clearedRowCount += 1
+      for (let c = 0; c < clearedRow.length; c++) {
+        // for (let c = clearedRow.length - 1; c >= 0; c--) {
+        console.log('LAST ITEM OF CLEARED ROW , FIRST LOOOOP ->', c)
+        // select that certain row, save in new variable
+        const row = playCellRows[clearedRow[c]]
+        // remove class from that row
+        row.forEach(cell => playCells[parseFloat(cell.dataset.index)].className = '')
+        // saved all rows to be shifted down in new variable, choose only landed cells on top of removed row
+        if (c === clearedRow.length - 1) {
+          landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[c] * 10))
+        } else {
+          landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[c] * 10) && cell.dataset.index > (clearedRow[c] * 10) - 19)
+        }
+        // landedCells = playCells.filter(cell => cell.dataset.index < (clearedRow[i] * 10))
+        landedCells = landedCells.filter(cell => cell.className.includes('landed'))
+        console.log('filtered landed loop', c, ' --> ', landedCells)
+        console.log('Removed Row loop', c, ' --> ', playCellRows[clearedRow[c]])
+
+        // iterate through every landedCells 
+        for (let b = landedCells.length - 1; b >= 0; b--) {
+          console.log('SHIFT CELLLLSSSS ROW -->', b)
+          // save class name of that cell in variable before remove
+          landedClass = landedCells[b].className
+          // landedClass = 'preview'
+          // console.log('loop.no -->', i)
+          console.log('landed class-->', landedClass)
+
+          // // * Remove Class
+          landedCells[b].classList.remove(landedClass)
+          // // console.log('cell to be removed -->', landedCells[i])
+          // // landedCells[i].className = ''
+          // // console.log('removed class ', landedClass, 'from ', landedCells[i])
+
+          // // * Add saved class, one cell lower
+          console.log(parseFloat(landedCells[b].dataset.index) + playWidth)
+          playCells[parseFloat(landedCells[b].dataset.index) + playWidth].classList.add(landedClass)
+          console.log('Added', landedClass, ' to-->', playCells[parseFloat(landedCells[b].dataset.index) + 10])
+
+
+        }
+      }
+
+    }
+    // console.log('check -->', playCellRows[19].every(item => item.className.includes('landed')))
+    console.log('Cleared Row Array -->', clearedRow)
+    console.log('Cleared Row Count -->', clearedRowCount)
+  }
+
+  // console.log('AfterLoop', landedCells)
+
+  lineScore = lineScore + clearedRowCount
+  score = score + (500 * clearedRowCount)
+  lineScoreText.innerHTML = `${lineScore}`
+  scoreText.innerHTML = `${score}`
 }
+
+
 window.addEventListener('DOMContentLoaded', init)
