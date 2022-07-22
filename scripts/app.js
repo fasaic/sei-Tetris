@@ -153,15 +153,16 @@ function init() {
   function setAudio() {
     soundEnter.play()
     if (sfxOn === true) {
-      sfxOn = false
       soundClick.volume = 0
       soundHardDrop.volume = 0
+      soundInActive.volume = 0
+      soundPaused.volume = 0
       soundClear.volume = 0
-      soundBackground.volume = 0
-      soundGameOver.volume = 0
+      soundLevelUp.volume = 0
       soundEnter.volume = 0
       soundStart.volume = 0
-      sfxButton.innerHTML = 'SFX ON'
+      soundBackground.volume = 0
+      soundGameOver.volume = 0
 
     } else if (sfxOn === false) {
       sfxOn = true
@@ -644,7 +645,7 @@ function init() {
 
     if (up === keyCode) {
       // console.log('Clicked up')
-
+      event.preventDefault()
       if (shape.currentPos.some(item => item >= (playCellCount - playWidth)) ||
         shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
         // console.log('Clicked up end')
@@ -654,7 +655,7 @@ function init() {
       }
     } else if (down === keyCode) {
       event.preventDefault()
-      if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
+      if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed') )) {
         // console.log('Clicked down end')
         deactivate()
         r = 0
