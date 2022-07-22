@@ -235,7 +235,7 @@ function init() {
   sfxButton.innerHTML = 'SFX OFF'
   restartButton.disabled = true
   playPauseButton.disabled = true
-  
+
 
   // ! GAME FUNCTIONS ------------------ 
 
@@ -431,9 +431,21 @@ function init() {
 
 
   // !---------------ROTATE------------------------------------------------------
+  let shift = 0
+  function startRotate(offset) {
+    for (let i = 0; i < 4; i++) {
+      // console.log('CURRENT POSITION', shape.currentPos)
+      remove()
+      shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
+    }
+    shape.currentPos.forEach(index => playCells[index + offset].classList.add(shape.moving))
+    shape.currentPos = shape.currentPos.map(index => index + offset)
+  }
+
   function rotate() {
-    const testRotate = []
+    let testRotate = [0,0,0,0]
     let didItRotate = true
+
 
     // ROTATION 
     r++
@@ -448,85 +460,80 @@ function init() {
       rot = Object.values(shape.rot)[r]
     }
 
-    // CHECK IF IT CAN ROTATE
+    // ROTATE
+    testRotate = shape.currentPos
+    testRotate = testRotate.map(item => item + 0)
+    console.log('shape.currentPos BEFORE ROTATE ', shape.currentPos)
+    console.log('TESTROTATE BEFORE ROTATE', testRotate)
     for (let i = 0; i < 4; i++) {
-      testRotate.push(parseFloat(shape.currentPos[i]) + parseFloat(rot[i]))
-      //// console.log(testRotate)
+
+      // remove()
+      testRotate[i] = testRotate[i] + parseFloat(rot[i])
     }
+    console.log('shape.currentPos AFTER ROTATE ', shape.currentPos)
+    console.log('TESTROTATE AFTER ROTATE ', testRotate)
+
+    // PREVENT OVERFLOW EDGE
+    if ((r === 2 || r === 0) && (testRotate[0] === testRotate[3] - 3) && (testRotate[0] % playWidth === 8) && (testRotate[3] % playWidth === 1)) {
+      shift += 2
+      console.log('if 1')
+    } else if (testRotate.every(item => item % playWidth === 9)) {
+      shift += 1
+      console.log('if 2')
+    } else if ((r === 2) && testRotate.some(item => item % playWidth === 2)) {
+      shift += 0
+      console.log('if 3')
+    } else if ((r === 2 || r === 0) && (testRotate[0] === testRotate[3] - 3) && (testRotate[0] % playWidth === 6) && (testRotate[3] % playWidth === 9)) {
+      shift = 0
+      console.log('if 4')
+    } else if ((r === 2 || r === 0) && (testRotate[0] === testRotate[3] - 3) && (testRotate[0] % playWidth === 7)) {
+      shift -= 1
+      console.log('if 5')
+    } else if ((r === 2) && (testRotate[0] % playWidth === 8) && (testRotate[3] % playWidth === 0)) {
+      shift -= 1
+      console.log('if 6')
+    } else if ((r === 2) && testRotate.some(item => item % playWidth === 0)) {
+      shift += 1
+      console.log('if 7')
+    } else if ((r === 0) && testRotate.some(item => item % playWidth === 7)) {
+      shift = 0
+      console.log('if 9')
+    } else if ((r === 0) && testRotate.some(item => item % playWidth === 9)) {
+      shift = -1
+      console.log('if 10')
+
+      // PREVENT OVERFLOW BOTTOM
+    } else if ((r === 1 | r === 3) && (testRotate[0] === testRotate[3] - 30) && testRotate.some(item => item >= 200)) {
+      shift -= 10
+      console.log('if 11')
+    } else if ((r === 1 | r === 3) && testRotate.some(item => item >= 170) && testRotate.some(item => item < 180)) {
+      shift = 0
+      console.log('if 12')
+    } else if ((r === 1 | r === 3) && testRotate.some(item => item >= playCellCount - 10)) {
+      shift -= 10
+    } else {
+      shift = 0
+      console.log('if 13')
+    }
+
+
+    testRotate = testRotate.map(item => item + shift)
+    console.log('TEST ROTATE AFTER SHIFT', testRotate)
+
     if (shape.shape === 'I' && (r === 1 || r === 3)) {
       didItRotate = true
-      shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
+      startRotate(shift)
     } else if (testRotate.some(index => playCells[index].className.includes('landed'))) {
       console.log('CANNOT ROTATE')
       didItRotate = false
+      console.log('existing position (no rotate done)', shape.currentPos)
+  
       r -= 1
     } else {
       didItRotate = true
-    }
-
-    console.log('current didItRotate', didItRotate)
-    // ROTATE POSSIBLE:
-    if (didItRotate === true) {
-      for (let i = 0; i < 4; i++) {
-        console.log('CURRENT POSITION', shape.currentPos)
-        remove()
-        shape.currentPos[i] = shape.currentPos[i] + parseFloat(rot[i])
-      }
-
-      // PREVENT OVERFLOW EDGE
-      if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[0] % playWidth === 8) && (shape.currentPos[3] % playWidth === 1)) {
-        shape.currentPos.forEach(index => playCells[index + 2].classList.add(shape.moving))
-        shape.currentPos = shape.currentPos.map(index => index + 2)
-        console.log('if 1')
-      } else if (shape.currentPos.every(item => item % playWidth === 9)) {
-        shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
-        shape.currentPos = shape.currentPos.map(index => index - 1)
-        console.log('if 2')
-      } else if ((r === 2) && shape.currentPos.some(item => item % playWidth === 2)) {
-        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-        console.log('if 3')
-      } else if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[0] % playWidth === 6) && (shape.currentPos[3] % playWidth === 9)) {
-        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-        console.log('if 4')
-      } else if ((r === 2 || r === 0) && (shape.currentPos[0] === shape.currentPos[3] - 3) && (shape.currentPos[0] % playWidth === 7)) {
-        shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
-        shape.currentPos = shape.currentPos.map(index => index - 1)
-        console.log('if 5')
-      } else if ((r === 2) && (shape.currentPos[0] % playWidth === 8) && (shape.currentPos[3] % playWidth === 0)) {
-        shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
-        shape.currentPos = shape.currentPos.map(index => index - 1)
-        console.log('if 6')
-      } else if ((r === 2) && shape.currentPos.some(item => item % playWidth === 0)) {
-        shape.currentPos.forEach(index => playCells[index + 1].classList.add(shape.moving))
-        shape.currentPos = shape.currentPos.map(index => index + 1)
-        console.log('if 7')
-
-      } else if ((r === 0) && shape.currentPos.some(item => item % playWidth === 7)) {
-        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-        console.log('if 9')
-      } else if ((r === 0) && shape.currentPos.some(item => item % playWidth === 9)) {
-        shape.currentPos.forEach(index => playCells[index - 1].classList.add(shape.moving))
-        shape.currentPos = shape.currentPos.map(index => index - 1)
-        console.log('if 10')
-
-        // PREVENT OVERFLOW BOTTOM
-      } else if ((r === 1 | r === 3) && (shape.currentPos[0] === shape.currentPos[3] - 30) && shape.currentPos.some(item => item >= 200)) {
-        shape.currentPos.forEach(index => playCells[index - 10].classList.add(shape.moving))
-        shape.currentPos = shape.currentPos.map(index => index - 10)
-        console.log('if 11')
-      } else if ((r === 1 | r === 3) && shape.currentPos.some(item => item >= 170) && shape.currentPos.some(item => item < 180)) {
-        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-        console.log('if 12')
-      } else if ((r === 1 | r === 3) && shape.currentPos.some(item => item >= playCellCount - 10)) {
-        shape.currentPos.forEach(index => playCells[index - 10].classList.add(shape.moving))
-        shape.currentPos = shape.currentPos.map(index => index - 10)
-      } else {
-        shape.currentPos.forEach(index => playCells[index].classList.add(shape.moving))
-        console.log('if 13')
-      }
-    } else {
-      console.log('DID NOT ROTE')
-      // //console.log('Test Current after loop', shape.currentPos)
+      startRotate(shift)
+      console.log('START ROTATE')
+      shift = 0
     }
 
   }
@@ -659,7 +666,6 @@ function init() {
       }
     } else if (left === keyCode) {
       event.preventDefault()
-      console.log('ON LEFT CLICK', shape.currentPos)
       if (shape.currentPos.some(item => (item % playWidth === 0)) || shape.currentPos.some(index => playCells[index - 1].className.includes('landed')) || shape.currentPos.some(index => playCells[index].className.includes('landed'))) {
         // console.log('Clicked left End')
       } else {
