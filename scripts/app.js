@@ -168,12 +168,14 @@ function init() {
       sfxOn = true
       soundClick.volume = 0.3
       soundHardDrop.volume = 1
+      soundInActive.volume = 1
+      soundPaused.volume = 0.5
       soundClear.volume = 0.3
+      soundLevelUp.volume = 1
       soundBackground.volume = 0.2
       soundGameOver.volume = 0.3
       soundEnter.volume = 0.3
       soundStart.volume = 0.3
-      sfxButton.innerHTML = 'SFX OFF'
     }
   }
   // ! CALL SHAPE / NEXT SHAPE DISPLAY -------------------------------------------------
