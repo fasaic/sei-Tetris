@@ -4,7 +4,8 @@
 <head>
   <meta charset="utf-8">
   <title>TETRIS!!</title>
-  <link rel="stylesheet" href="styles/main.css">
+  <!-- <link rel="stylesheet" href="styles/main.css"> -->
+  <link rel="stylesheet" href="styles/bmo.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Electrolize&display=swap" rel="stylesheet">
@@ -29,15 +30,17 @@
           <button class="button" id="restart">RESTART</button>
           <button class="button" id="sfx">SFX ON</button>
         </div>
-        <div id="howTo">
-          <h2>highscore:</h2>
-          <p id="highScore"></p>
-          <!-- <img src="./media/arrows.png" alt="arrows"> -->
-        </div>
-        <!-- <input type="checkbox" class="button"/> -->
-        <div id="howTo">
-          <h2>controls</h2>
-          <img src="./media/arrows.png" alt="arrows">
+        <div id="boxContainer">
+          <div id="leftBox">
+            <h2>highscore:</h2>
+            <p id="highScore" class="highScoreDisplay">0</p>
+            <!-- <img src="./media/arrows.png" alt="arrows"> -->
+          </div>
+          <!-- <input type="checkbox" class="button"/> -->
+          <div id="leftBox">
+            <h2>controls</h2>
+            <img src="./media/arrows.png" alt="arrows">
+          </div>
         </div>
       </div>
 
@@ -46,10 +49,13 @@
     <!-- PANEL 2 -->
     <section id="grid-wrapper">
       <div id="playGrid" class=""></div>
-      
+
       <div id="startGame">
-        <h2>Welcome to</h2>
+        <div id="startTitle">
+        <p>it's</p>
         <h2 id="tetris">TETRIS</h2>
+        <p>TIME!</p>
+      </div>
         <h3 class="enter">press enter to start</h3>
       </div>
       <div id="gameOver">

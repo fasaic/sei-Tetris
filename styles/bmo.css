@@ -12,14 +12,15 @@ body {
   min-height: 100vh;
   margin: 0px;
   margin-top: 60px;
-  /* background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../media/pexels-gradienta-7134986.jpg'); */
+  /* background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../media/adventureTimeBackground.jpeg'); */
   /* background-image: url('../media/pexels-gradienta-7134986.jpg'); */
   /* background-color: rgb(201, 201, 201); */
+  background-image: linear-gradient(rgb(203 203 203 / 54%), rgb(163 163 163 / 51%)), url(../media/adventureTimeBackground.jpeg);
 
-  background-color: rgb(228 228 228);
+  /* background-color: rgb(228 228 228); */
 
   background-size: cover;
-  background-position: center;
+  background-position: bottom;
 }
 
 header {
@@ -50,7 +51,8 @@ main {
 .panel {
   /* border: 1px dashed lightgray; */
   /* background-color: rgba(211, 211, 211, 0.539); */
-  background-color: rgb(211, 211, 211);
+  /* background-color: rgb(211, 211, 211); */
+  background-color: #7da298;
   display: flex;
   flex-direction: column;
 
@@ -76,15 +78,30 @@ main {
 #sfx{
   padding: 6px;
   font-size: 0.7rem;
-  background-color: #2e7b18d6;
-  box-shadow: 2px 2px #2e7b18d6;
+  /* background-color: #2e7b18d6; */
+  background-color: rgb(79 186 96);
+
 }
-#howTo {
+#boxContainer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 20px;
+}
+#leftBox {
   text-align: center;
   /* background-color: rgb(219, 219, 219); */
-  background-color: rgba(219, 219, 219, 1);
+  /* background-color: rgba(219, 219, 219, 1); */
+  background-color: #9eb9b3;
+
   border-radius: 10px;
 
+}
+
+#leftBox h2 {
+  font-size: 1rem;
 }
 
 #controls {
@@ -93,6 +110,7 @@ main {
   justify-content: space-between;
   margin: 0 auto;
   height: 100%;
+  text-transform: uppercase;
 
 }
 
@@ -108,7 +126,9 @@ main {
 }
 
 #playPause {
-  background-color: rgb(194, 61, 61);
+  /* background-color: rgb(194, 61, 61); */
+  background-color: rgb(208 19 72);
+  /* border: 1px solid; */
   color: white;
 }
 #playPause:hover {
@@ -117,21 +137,23 @@ main {
 }
 .buttons button:hover {
   cursor: pointer;
-  background-color: rgb(255, 217, 92);
-  box-shadow: 2px 2px 20px rgb(255, 212, 58);
+  /* background-color: rgb(255, 217, 92); */
+  /* box-shadow: 2px 2px 20px rgb(255, 212, 58); */
+  /* box-shadow: 2px 2px rgb(208, 177, 75); */
+  box-shadow: 0px 2px rgb(77 71 50);
 }
 
 
 .buttons button {
   width: 80px;
   height: 40px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   /* border: 1px dashed transparent; */
   border-radius: 15px;
   padding: 10px;
   /* background-color: rgba(212, 212, 212, 0.57); */
-  background-color: rgb(241, 204, 81);
-  box-shadow: 2px 2px rgb(208, 177, 75);
+  background-color: rgb(231, 195, 64);
+  
 }
 
 #right {
@@ -154,18 +176,37 @@ main {
   margin-bottom: 15px;
   /* background-color: gray; */
   /* background-color: rgba(219, 219, 219, 0.8); */
-  background-color: rgba(219, 219, 219, 1);
+  /* background-color: rgba(219, 219, 219, 1); */
+
+  background-color: #9eb9b3;
+
+}
+
+.statsDisplay, #highScore {
+  border: 3px ridge #929292;
+  color: rgb(77, 77, 77);
+  /* background-color: rgb(60, 60, 60); */
+  /* background-color: rgb(198, 207, 198); */
+  background-color: rgb(202 210 202);
+  text-align: center;
+  border-radius: 10px;
+
 }
 
 .statsDisplay {
   width: calc(100% - 50px);
-  border: 3px ridge black;
-  color: goldenrod;
-  background-color: rgb(60, 60, 60);
-  text-align: center;
   margin-bottom: 16px;
-  border-radius: 10px;
+
 }
+
+#highScore {
+  /* width: 100%; */
+  width: calc(100% - 50px);
+  margin: 0 auto;
+  margin-bottom: 16px;
+}
+
+
 
 /* #score {
   margin-bottom: 0px;
@@ -178,9 +219,11 @@ main {
 #startGame {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.2);
-  color: white;
+  justify-content: flex-end;
+  /* background-color: rgba(0, 0, 0, 0.2);
+  color: white; */
+  background-color: rgb(210 231 215 / 82%);
+  color: #2f2d2d;
   text-align: center;
   z-index: 9;
 
@@ -223,10 +266,14 @@ main {
   justify-content: center;
   align-items: center;
   margin-bottom: 30px;
+  margin-top: 20px;
+  margin-left: 20px;
   /* box-shadow: 2px 2px 30px 2px rgba(0, 0, 0, 0.7); */
-  box-shadow: 2px 2px 30px 2px rgba(51, 51, 51, 0.594);
+  /* box-shadow: 2px 2px 30px 2px rgba(51, 51, 51, 0.594); */
   /* border-radius: 10px; */
 }
+
+
 
 #playGrid,
 #nextGrid {
@@ -236,6 +283,10 @@ main {
   align-items: center;
   /* background-color: rgb(60, 60, 60); */
   background-color: rgb(35 34 34);
+
+
+  /* background-color: rgb(210 231 215 / 82%); */
+  /* background-color: rgb(208, 229, 215); */
   /* background-color: rgba(54, 54, 54, 0.798); */
   /* background-color: rgba(51, 51, 51, 0.594); */
   /* border: 1px dashed black; */
@@ -251,7 +302,7 @@ main {
 
 #playGrid div {
   /* border: 0.5px dashed rgb(158, 158, 158); */
-  border: 0.5px solid rgb(106 106 106);
+  border: 0.5px solid rgb(76 76 76);
   /* border: 0.2px dashed rgb(206, 206, 206); */
   /* border: 0.5px dashed rgb(255, 255, 255); */
   /* flex-grow: 1;  */
@@ -262,10 +313,13 @@ main {
 #nextGrid {
   height: calc(30px * 4);
   width: calc(30px * 4);
+  border: 5px ridge rgb(79 79 79);
+  border-radius: 15px;
 }
 
 #nextGrid div {
-  border: 0.5px dashed grey;
+  /* border: 0.5px dashed grey; */
+  border: 0.5px solid rgb(76 76 76);
   /* flex-grow: 1;  */
   height: calc(100% / 4);
   width: calc(100% / 4);
@@ -364,8 +418,18 @@ main {
 .t {
   background-color: #3d9ef1;
 } */
+
+#startTitle {
+  height: 350px;
+}
 #tetris {
-  text-decoration: underline;
+  /* text-decoration: ; */
+  font-size: 4rem;
+  margin: 0;
+}
+
+.enter {
+  margin-bottom: 50px;
 }
 .preview {
   background-color: #9cafc1;

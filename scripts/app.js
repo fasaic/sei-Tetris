@@ -14,7 +14,8 @@ function init() {
   const nextHeight = 4
   const nextCellCount = nextWidth * nextHeight
   const nextCells = []
-
+ 
+  localStorage.clear()
   function makeGrid(cellCount, cells, gridDiv) {
     for (let i = 0; i < cellCount; i++) {
       const cell = document.createElement('div')
@@ -136,12 +137,14 @@ function init() {
   let nextLevel = 5
   let scoreMultiplier = 0
   let highScore = localStorage.getItem('highScore')
+  checkHighScore()
 
   const playCellRows = []
   const cellsPerRow = 10
   const highScoreText = document.querySelector('#highScore')
   const scoreText = document.querySelector('#scoreDisplay')
-  const finalScoreText = document.querySelector('#scoreOverValue')
+  const finalScoreText = document.querySelector('#scoreOver')
+  const finalScoreValue = document.querySelector('#scoreOverValue')
   const lineScoreText = document.querySelector('#linesDisplay')
   const levelText = document.querySelector('#levelDisplay')
   const sfxButton = document.querySelector('#sfx')
@@ -151,7 +154,7 @@ function init() {
   scoreText.innerHTML = score
   lineScoreText.innerHTML = `${lineScore}`
   levelText.innerHTML = currentLevel
-  checkHighScore()
+  
   highScoreText.innerHTML = highScore
   restartButton.disabled = true
   playPauseButton.disabled = true
@@ -237,6 +240,7 @@ function init() {
   function drop() {
     // Check if it hits buttom or cells with landed shape
     gamePaused = false
+    playGrid.classList.remove('shake')
     if (playCells.some(cell => cell.className.includes('moving'))) {
       // console.log('there is a moving shape!')
       if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
@@ -287,7 +291,7 @@ function init() {
     soundGameOver.play()
     document.querySelector('#gameOver').style.display = 'flex'
     document.querySelector('#playGrid').style.position = 'absolute'
-    finalScoreText.innerHTML = `${score}`
+    finalScoreValue.innerHTML = `${score}`
     clearInterval(timer)
     checkHighScore()
   }
@@ -297,8 +301,11 @@ function init() {
       highScore = 0
     } else if (score > highScore) {
       localStorage.setItem('highScore', score)
+      highScore = localStorage.getItem('highScore')
       highScoreText.innerHTML = highScore
       console.log('SAVE HIGH SCORE')
+      finalScoreText.innerHTML = `** NEW HIGH SCORE!!!! ** <br><br><span id="scoreOverValue">score: ${score}</span`
+
     }
     console.log('highSCOREEE', highScore)
     console.log('SCOREEEE', score)
@@ -537,6 +544,8 @@ function init() {
   let landedCells = []
   let landedClass = null
   let shiftMulti = 1
+  let row = 0
+
 
 
 
@@ -558,6 +567,7 @@ function init() {
         console.log('LINE SCORE-->', lineScore)
         checkLevel()
         console.log('level checked')
+        playGrid.classList.add('shake')
       }
       // //console.log('check -->', playCellRows[19].every(item => item.className.includes('landed')))
       // //console.log('Cleared Row Array -->', clearedRow)
@@ -567,8 +577,11 @@ function init() {
     for (let c = 0; c < clearedRow.length; c++) {
       //// console.log('LAST ITEM OF CLEARED ROW , FIRST LOOOOP ->', c)
       // select that certain row, save in new variable
-      const row = playCellRows[clearedRow[c]]
+      row = playCellRows[clearedRow[c]]
       // remove class from that row
+      // row.forEach(cell => playCells[parseFloat(cell.dataset.index)].classList.add('shake'))
+      // setTimeout(removeRow, 200)
+      // row.forEach(cell => playCells[parseFloat(cell.dataset.index)].classList.remove('shake'))
       row.forEach(cell => playCells[parseFloat(cell.dataset.index)].className = '')
       // saved all rows to be shifted down in new variable, choose only landed cells on top of removed row
       if (c === clearedRow.length - 1) {
@@ -637,6 +650,10 @@ function init() {
     score = score + (500 * clearedRowCount) + scoreMultiplier
     scoreText.innerHTML = `${score}`
 
+  }
+
+  function removeRow(){
+    row.forEach(cell => playCells[parseFloat(cell.dataset.index)].className = '')
   }
 
   // * SCORES AND LEVELS
@@ -763,6 +780,7 @@ function init() {
         levelText.innerHTML = currentLevel
         restartButton.disabled = false
         playPauseButton.disabled = false
+        // checkHighScore()
         // playCells.map(index => playCells[index].classList.remove('landed'))
         drop()
       } else {
