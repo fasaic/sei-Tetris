@@ -15,9 +15,6 @@
 </head>
 
 <body>
-  <audio>
-    <source src="./audio/click.wav">
-  </audio>
   <header>
     <h1>TETRIS</h1>
   </header>
@@ -52,12 +49,20 @@
 
       <div id="startGame">
         <div id="startTitle">
-        <p>it's</p>
-        <h2 id="tetris">TETRIS</h2>
-        <p>TIME!</p>
-      </div>
+          <p>it's</p>
+          <h2 id="tetris">TETRIS</h2>
+          <p>TIME!</p>
+        </div>
         <h3 class="enter">press enter to start</h3>
       </div>
+
+      <div id="pauseGame">
+        <div id="pauseTitle">
+          <h2 id="pauseText">PAUSED</h2>
+        </div>
+        <h3 class="enter">press enter to resume</h3>
+      </div>
+
       <div id="gameOver">
         <h2>game over :(</h2>
         <p id="scoreOver">score: <span id="scoreOverValue"></span></p>
