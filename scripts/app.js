@@ -130,54 +130,7 @@ function init() {
     return eval(`shape${random}`)
   }
 
-  // ! AUDIO -------------------------------------------------------------
-  const soundClick = new Audio('./audio/movement.wav')
-  const soundHardDrop = new Audio('./audio/hardDrop.m4a')
-  const soundInActive = new Audio('./audio/inactive.wav')
-  const soundPaused = new Audio('./audio/pause.m4a')
-  const soundClear = new Audio('./audio/lineCleared.wav')
-  const soundLevelUp = new Audio('./audio/levelUp.wav')
-  const soundEnter = new Audio('./audio/menuConfirm.wav')
-  const soundStart = new Audio('./audio/start.wav')
-  const soundBackground = new Audio('./audio/background.m4a')
-  const soundGameOver = new Audio('./audio/gameOver.wav')
-  soundClick.volume = 0.3
-  soundHardDrop.volume = 1
-  soundClear.volume = 0.3
-  soundBackground.volume = 0.2
-  soundGameOver.volume = 0.3
-  soundEnter.volume = 0.3
-  soundStart.volume = 0.3
-  soundBackground.loop = true
 
-  function setAudio() {
-    soundEnter.play()
-    if (sfxOn === true) {
-      soundClick.volume = 0
-      soundHardDrop.volume = 0
-      soundInActive.volume = 0
-      soundPaused.volume = 0
-      soundClear.volume = 0
-      soundLevelUp.volume = 0
-      soundEnter.volume = 0
-      soundStart.volume = 0
-      soundBackground.volume = 0
-      soundGameOver.volume = 0
-
-    } else if (sfxOn === false) {
-      sfxOn = true
-      soundClick.volume = 0.3
-      soundHardDrop.volume = 1
-      soundInActive.volume = 1
-      soundPaused.volume = 0.5
-      soundClear.volume = 0.3
-      soundLevelUp.volume = 1
-      soundBackground.volume = 0.2
-      soundGameOver.volume = 0.3
-      soundEnter.volume = 0.3
-      soundStart.volume = 0.3
-    }
-  }
   // ! CALL SHAPE / NEXT SHAPE DISPLAY -------------------------------------------------
   // * set current shape / shape events
   let shape = null
@@ -239,6 +192,57 @@ function init() {
   restartButton.disabled = true
   playPauseButton.disabled = true
 
+  // ! AUDIO -------------------------------------------------------------
+  const soundClick = new Audio('./audio/movement.wav')
+  const soundHardDrop = new Audio('./audio/hardDrop.m4a')
+  const soundInActive = new Audio('./audio/inactive.wav')
+  const soundPaused = new Audio('./audio/pause.m4a')
+  const soundClear = new Audio('./audio/lineCleared.wav')
+  const soundLevelUp = new Audio('./audio/levelUp.wav')
+  const soundEnter = new Audio('./audio/menuConfirm.wav')
+  const soundStart = new Audio('./audio/start.wav')
+  const soundBackground = new Audio('./audio/background.m4a')
+  const soundGameOver = new Audio('./audio/gameOver.wav')
+  soundClick.volume = 0.3
+  soundHardDrop.volume = 1
+  soundClear.volume = 0.3
+  soundBackground.volume = 0.2
+  soundGameOver.volume = 0.3
+  soundEnter.volume = 0.3
+  soundStart.volume = 0.3
+  soundBackground.loop = true
+
+  function setAudio() {
+    soundEnter.play()
+    if (sfxOn === true) {
+      sfxOn = false
+      soundClick.volume = 0
+      soundHardDrop.volume = 0
+      soundInActive.volume = 0
+      soundPaused.volume = 0
+      soundClear.volume = 0
+      soundLevelUp.volume = 0
+      soundEnter.volume = 0
+      soundStart.volume = 0
+      soundBackground.volume = 0
+      soundGameOver.volume = 0
+      sfxButton.innerHTML = 'SFX ON'
+
+    } else if (sfxOn === false) {
+      sfxOn = true
+      soundClick.volume = 0.3
+      soundHardDrop.volume = 1
+      soundInActive.volume = 1
+      soundPaused.volume = 0.5
+      soundClear.volume = 0.3
+      soundLevelUp.volume = 1
+      soundBackground.volume = 0.2
+      soundGameOver.volume = 0.3
+      soundEnter.volume = 0.3
+      soundStart.volume = 0.3
+      sfxButton.innerHTML = 'SFX OFF'
+    }
+  }
 
   // ! GAME FUNCTIONS ------------------ 
 
@@ -446,7 +450,7 @@ function init() {
   }
 
   function rotate() {
-    let testRotate = [0,0,0,0]
+    let testRotate = [0, 0, 0, 0]
     let didItRotate = true
 
 
@@ -530,7 +534,7 @@ function init() {
       console.log('CANNOT ROTATE')
       didItRotate = false
       console.log('existing position (no rotate done)', shape.currentPos)
-  
+
       r -= 1
     } else {
       didItRotate = true
@@ -657,7 +661,7 @@ function init() {
       }
     } else if (down === keyCode) {
       event.preventDefault()
-      if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed') )) {
+      if (shape.currentPos.some(index => (index + playWidth) >= playCellCount) || shape.currentPos.some(index => playCells[index + playWidth].className.includes('landed'))) {
         // console.log('Clicked down end')
         deactivate()
         r = 0
