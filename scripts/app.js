@@ -473,10 +473,9 @@ function init() {
     console.log('shape.currentPos BEFORE ROTATE ', shape.currentPos)
     console.log('TESTROTATE BEFORE ROTATE', testRotate)
     for (let i = 0; i < 4; i++) {
-
-      // remove()
       testRotate[i] = testRotate[i] + parseFloat(rot[i])
     }
+    
     console.log('shape.currentPos AFTER ROTATE ', shape.currentPos)
     console.log('TESTROTATE AFTER ROTATE ', testRotate)
 
