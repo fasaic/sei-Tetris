@@ -80,56 +80,56 @@ function init() {
       2. each shape's next position is contains shape
       3. i
 
-  // gameActive = true
-  // AT THE START: generate randomShape() (select from list of 7 shapes)
-  // DURING GAME: generate randomShape() (once the currentshape reaches the bottom) -> display in nextGrid , store in nextArray
-  // ------------ get value from nextShape = currentShape 
-  // ------------ CHECK if the next position is empty --> moves down
-  // ------------ movedown with current shape
-  // MOVEMENT: offset position down (playCell-index increase by playWidth(10) from array(rotation1/2/3/4) [4, 13, 14, 15] -> [14, 23, 24, 15])
-  // ------------ each time it moves down --> addColorClass to new position --> removeColorClass from current
-  // ------------ STOP when the shape reaches endPosition(check index of cell with color class - shapeArrayOffset)
-  // ------------ STOP when player press pause
-  // ------------ STOP when it reaches the top of the grid (if playCell with index 0-9 includes color class)
-  // ------------ STOP when it reaches bottom of the grid (can still move left/right with a timeOut?)
+  gameActive = true
+  AT THE START: generate randomShape() (select from list of 7 shapes)
+  DURING GAME: generate randomShape() (once the currentshape reaches the bottom) -> display in nextGrid , store in nextArray
+  ------------ get value from nextShape = currentShape 
+  ------------ CHECK if the next position is empty --> moves down
+  ------------ movedown with current shape
+  MOVEMENT: offset position down (playCell-index increase by playWidth(10) from array(rotation1/2/3/4) [4, 13, 14, 15] -> [14, 23, 24, 15])
+  ------------ each time it moves down --> addColorClass to new position --> removeColorClass from current
+  ------------ STOP when the shape reaches endPosition(check index of cell with color class - shapeArrayOffset)
+  ------------ STOP when player press pause
+  ------------ STOP when it reaches the top of the grid (if playCell with index 0-9 includes color class)
+  ------------ STOP when it reaches bottom of the grid (can still move left/right with a timeOut?)
   
-  // once it reaches the bottom, generate next random shape
+  once it reaches the bottom, generate next random shape
 
-  // *------ MOVEMENTS ----- 
-  // ? MOVE LEFT
-  // shift currentPosition Array to the left (-1)
-  // shift continously when hold
-  // ? MOVE RIGHT
-  // Shift currentPosition Arry to the right (+1)
-  // shift continously when hold
-  // ? INSTANT DOWN
-  // move shape to end position
-  // remove currentPosition colorClass from cell
-  // add colorClass instantly to endPosition ()
-  // play sound effect
-  // add score + 5
-  // ? ROTATE
-  // rotate 90degrees to the right
-  // default rotate array with common axis?
-  // shift horizontal / vertical to offset the shape back to center 
-
-
-
-  // *---------END POSITION -------
-  // ? check the end position
-  // use cells that has color class but inactive as an offset from the bottom
-  // add inactive class to the shape with colorClass 
+  *------ MOVEMENTS ----- 
+  ? MOVE LEFT
+  shift currentPosition Array to the left (-1)
+  shift continously when hold
+  ? MOVE RIGHT
+  Shift currentPosition Arry to the right (+1)
+  shift continously when hold
+  ? HARD DROP
+  move shape to end position
+  remove currentPosition colorClass from cell
+  add colorClass instantly to endPosition ()
+  play sound effect
+  add score + 5
+  ? ROTATE
+  rotate 90degrees to the right
+  default rotate array with common axis?
+  shift horizontal / vertical to offset the shape back to center 
 
 
-  // *------ LINE CLEARED ---
-  // ? check If line is complete (check every cellRow in tens, 0-9, 10-19, 20-20 etc. has colorClass
-  // create cellRows --> check which rows are cleared
-  // check if all cells in the row contains color --> removed
-  // always check if the next line is empty, if yes, move the whole block down
-  // removeLine effect plays on the line
-  // removeLineAudio plays
-  // add number of linesCleared to linesCount
-  // add score + 200
+
+  *---------END POSITION -------
+  ? check the end position
+  use cells that has color class but inactive as an offset from the bottom
+  add inactive class to the shape with colorClass 
+
+
+  *------ LINE CLEARED ---
+  ? check If line is complete (check every cellRow in tens, 0-9, 10-19, 20-20 etc. has colorClass
+  create cellRows --> check which rows are cleared
+  check if all cells in the row contains color --> removed
+  always check if the next line is empty, if yes, move the whole block down
+  removeLine effect plays on the line
+  removeLineAudio plays
+  add number of linesCleared to linesCount
+  add score + 200
 
 
   // ! EVENTS
